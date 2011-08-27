@@ -1,11 +1,28 @@
 $redis = require './adapter'
 config = require './config'
+colors = require 'colors'
 {EventEmitter} = require 'events'
+{AcroLetters} = require './AcroLetters'
+acro = new AcroLetters()
 
 class Channel extends EventEmitter
+  log: (msg) -> console.log "channel: #{@name} - #{msg}".yellow
+
   remove_available: -> $redis.srem 'game:available-channels', @name
 
   make_available: -> $redis.sadd 'game:available-channels', @name
+
+  new_letters: ->
+    letters = acro.fetch()
+    $redis.hset "channel:letters", @name, letters
+    letters
+
+  get_letters: (cb) ->
+    $redis.hget "channel:letters", @name, (err, letters) ->
+      if letters
+        cb letters
+      else
+        cb new_letters
 
   get_round: (cb) ->
     $redis.hget "channel-round", @name, (err, round) ->
@@ -16,11 +33,13 @@ class Channel extends EventEmitter
     $redis.hincrby "channel-round", @name, 1, (err, round) ->
       if round > config.rules.max_rounds
         $redis.hset "channel-round", self.name, 0
-        console.log "channel #{self.name} has reset"
+        self.log "reset to round 0"
         self.emit 'round reset'
       else
-        console.log "channel #{self.name} entered round #{round}"
-        self.emit 'new round'
+        letters = self.new_letters()
+        self.log "entered round #{round} with #{letters}"
+        self.emit 'new round', letters
+
       cb() if cb
 
   add_user: (uid) ->
@@ -30,7 +49,7 @@ class Channel extends EventEmitter
         self.emit 'error', 'too many players'
         self.remove_available()
       else
-        console.log "channel: #{self.name} (#{len}) - new player: #{uid}"
+        self.log "(#{len}) - new player: #{uid}"
         self.emit 'new player', uid
         if len >= config.rules.min_players
           self.get_round (round) ->
@@ -54,7 +73,7 @@ class Channel extends EventEmitter
     $redis.llen @list, (err, len) ->
       throw err if err?
       @size = len
-      console.log "chan: #{self.name} has #{len} users"
+      self.log "STARTED with #{len} users"
       if len >= config.rules.max_players
         self.emit 'error', 'too many players'
       else

@@ -7,7 +7,7 @@ setInterval(function () {
   game.available_channel(function (channel) {
     channel.on('error', function (err) { console.log(err); })
     channel.get_users(function (users) {
-      console.log(users);
+      //console.log(users);
       channel.add_user('bro');
     });
   });

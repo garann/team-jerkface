@@ -1,0 +1,10 @@
+- if (!everyauth.loggedIn)
+  h2 Not Authenticated
+  #register
+    a(href='/auth/twitter', style='border: 0px')
+      img(style='border: 0px', src='https://si0.twimg.com/images/dev/buttons/sign-in-with-twitter-l.png')
+- else
+  h3
+    a(href='/logout') Logout
+  h1 you're logged in bro!
+  #content

@@ -1,0 +1,12 @@
+!!! 5
+html
+  head
+    title= typeof(title) !== 'undefined' ? title : "acronyms with strangers"
+    link(rel='stylesheet', href = '/css/app.css')
+    script(src='http://code.jquery.com/jquery-1.6.2.min.js')
+    script(src='/socket.io/socket.io.js')
+    script(src='/js/ready.js')
+  body
+    h1 Acronyms with Strangers
+    #main
+      != body

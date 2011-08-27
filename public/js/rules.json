@@ -1,0 +1,6 @@
+{
+    "rounds": 10
+  , "max_players": 30
+  , "min_acr_size": 4
+  , "max_acr_size": 7
+}

@@ -49,6 +49,7 @@ app.get('/', function (req, res) {
 
 app.get('/index', function(req, res) {
     game.available_channel(function(chan) {
+        req.session.channel = chan;
         chan.get_users(function(users) {
             users.join(req.session.uid);
             if (users.indexOf(req.session.uid) === -1) { //  if user isn't in channel add them
@@ -57,12 +58,10 @@ app.get('/index', function(req, res) {
                         throw new Error(err);
                 });
             }
-            console.log(users);
             usersLong = [];
             users.map(function(u) {
                 usersLong.push({ username: u });
             });
-            console.log(usersLong);
             res.render('index', { players: usersLong, userInfo: { username: req.session.uid } });
         });
     });
@@ -75,8 +74,10 @@ io.sockets.on('connection', function (socket) {
   session_store.get(sid, function (err, session) {
     if (!session || !session.uid || !session.channel) return;
 
-      game.get_channel(session.channel.name, function(chan) {
+          console.log("hi");
 
+
+      game.get_channel(session.channel.name, function(chan) {
           chan.on('new user', function(uid) {
               chan.get_users(function(users) {
                   io.sockets.in(chan.name).emit('rosterUpdated', users);

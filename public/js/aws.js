@@ -16,7 +16,8 @@ var aws = {
 	};
 	this.roomInfo = {
 		users: [],
-		round: 0
+		round: 0,
+		scores: []
 	};
 
 	this.render = {
@@ -67,6 +68,15 @@ var aws = {
 			$body.addClass("voting");
 		});
 
+		$.subscribe("roundSummary", function() {
+			$vote.html($.tmpl("summaryTmpl",that.currentRound.responses));
+		});
+
+		$.subscribe("gameEnded", function() {
+			$vote.html($.tmpl("scoresTmpl",that.roomInfo.scores));
+			$body.addClass("voting");
+		});
+
 	};
 
 	this.sio = io.connect();
@@ -84,6 +94,7 @@ var aws = {
 
 		sio.on("roundStarted", function(d) {
 			// render letters
+			that.roomInfo.round++;
 			that.currentRound.letters = d.letters;
 			that.currentRound.started = Date.now();
 			// render response stage 
@@ -118,10 +129,13 @@ var aws = {
 
 		sio.on("roundSummary", function(d) {
 			// render responses
+			that.currentRound.responses = d.responses;
+			$.publish("roundSummary");
 		});
 
 		sio.on("gameEnded", function(d) {
-			// render scores
+			that.roomInfo.scores = d.scores;
+			$.publish("gameEnded");
 		});
 
 		sio.on("serverError", function(d) {

@@ -19,6 +19,8 @@
     , "redis": "~> 0.6.7"
     , "restler": "~> 0.2.1"
     , "socket.io": "~> 0.7.9"
+    , "underscore": "~> 1.1.7"
+    , "nko": "~> 0.1.0"
   },
   "devDependencies": {},
   "scripts": {

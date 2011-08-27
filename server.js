@@ -43,11 +43,9 @@ app.configure(function () {
   app.register('.html', require('jqtpl').express) 
 });
 
-app.get('/:channel?', function (req, res) {
-  //console.log(req)
+app.get('/', function (req, res) {
   if (req.session.uid) users[req.cookies['connect.sid']] = req.session.uid;
-  res.render('home', {params: req.params.channel});
-  // save session data to redis instead of this
+  res.render('home');
 });
 
 //channel.on('enoughForGame', function(ch) {

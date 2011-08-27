@@ -1,0 +1,5 @@
+{{each responses}}
+<span class="response">{{= $value.response}} 
+	<input type="button" class="btnVote" data-id="{{= $value.responseID}}" value="Vote" />
+</span>
+{{/each}}

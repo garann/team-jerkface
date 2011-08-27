@@ -55,11 +55,11 @@ var aws = {
 		};
 
 		$.subscribe("rosterUpdated",function() {
-			$roster.html($.tmpl("rosterTmpl",that.roomInfo.users));
+			$roster.html($.tmpl("rosterTmpl",{players: that.roomInfo.users}));
 		});
 
 		$.subscribe("roundStarted",function() {
-			$game.html($.tmpl("lettersTmpl",that.currentRound.letters;
+			$game.html($.tmpl("lettersTmpl",{letters: that.currentRound.letters}));
 			$resp.html($.tmpl("responseTmpl",null));
 			rend.enableResponse();
 			rend.responseTimer(that.currentRound.started);
@@ -67,18 +67,18 @@ var aws = {
 		});
 
 		$.subscribe("votingStarted",function() {
-			$vote.html($.tmpl("voteTmpl",that.currentRound.responses));
+			$vote.html($.tmpl("voteTmpl",{responses: that.currentRound.responses}));
 			rend.enableVote();
 			rend.voteTimer(Date.now());
 			$body.addClass("voting");
 		});
 
 		$.subscribe("roundSummary", function() {
-			$vote.html($.tmpl("summaryTmpl",that.currentRound.responses));
+			$vote.html($.tmpl("summaryTmpl",{responses: that.currentRound.responses}));
 		});
 
 		$.subscribe("gameEnded", function() {
-			$vote.html($.tmpl("scoresTmpl",that.roomInfo.scores));
+			$vote.html($.tmpl("scoresTmpl",{scores: that.roomInfo.scores}));
 			$body.addClass("voting");
 		});
 

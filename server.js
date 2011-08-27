@@ -75,6 +75,8 @@ io.sockets.on('connection', function (socket) {
     if (!session || !session.uid || !session.channel) return;
 
       game.get_channel(session.channel.name, function(chan) {
+          socket.join(chan.name);
+
           chan.on('new user', function(uid) {
               chan.get_users(function(users) {
                   io.sockets.in(chan.name).emit('rosterUpdated', users);

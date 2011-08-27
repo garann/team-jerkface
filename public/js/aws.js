@@ -30,14 +30,16 @@ var aws = {
 			loadTmpl("templates/voteTmpl","voteTmpl");
 			loadTmpl("templates/summaryTmpl","summaryTmpl");
 			loadTmpl("templates/scoresTmpl","scoresTmpl");
-		};
 
-		this.enableResponse = function() {
-			
-		};
+			$.live("body.playing #btnRespond", "click", function(e) {
+				e.preventDefault();
+				that.events.submitResponse($("#txtResponse").val());
+			});
 
-		this.enableVote = function() {
-			
+			$.live("body.voting input.btnVote", "click", function(e) {
+				e.preventDefault();
+				that.events.submitVote($(this).data("id");
+			});
 		};
 
 		this.responseTimer = function(startTime) {
@@ -51,7 +53,9 @@ var aws = {
 		this.clear = function() {
 			$game.html("");
 			$resp.html("");
-			$body.removeClass("playing").removeClass("voting");
+			$body
+				.removeClass("playing")
+				.removeClass("voting");
 		};
 
 		$.subscribe("rosterUpdated",function() {
@@ -61,14 +65,12 @@ var aws = {
 		$.subscribe("roundStarted",function() {
 			$game.html($.tmpl("lettersTmpl",{letters: that.currentRound.letters}));
 			$resp.html($.tmpl("responseTmpl",null));
-			rend.enableResponse();
 			rend.responseTimer(that.currentRound.started);
 			$body.addClass("playing");
 		});
 
 		$.subscribe("votingStarted",function() {
 			$vote.html($.tmpl("voteTmpl",{responses: that.currentRound.responses}));
-			rend.enableVote();
 			rend.voteTimer(Date.now());
 			$body.addClass("voting");
 		});
@@ -107,14 +109,10 @@ var aws = {
 			// render letters
 			that.roomInfo.round++;
 			that.currentRound.letters = d.letters;
-			that.currentRound.started = Date.now();
+			that.currentRound.started = d.started;
 			// render response stage 
 			$.publish("roundStarted");
 		});
-
-		//sio.on("responseSubmitted", function(d) {
-			
-		//});
 
 		sio.on("responseError", function(d) {
 			// render error message
@@ -129,10 +127,6 @@ var aws = {
 			that.currentRound.responses = d.responses;
 			$.publish("votingStarted");
 		});
-
-		//sio.on("voteSubmitted", function(d) {
-			
-		//});
 
 		sio.on("votingEnd", function(d) {
 			that.render.clear();
@@ -152,6 +146,14 @@ var aws = {
 		sio.on("serverError", function(d) {
 			// render error message
 		});
+
+		this.submitResponse = function(response) {
+			sio.emit("responseSubmitted", {response: response});
+		};
+
+		this.submitVote = function(responseID) {
+			sio.emit("voteSubmitted", {responseID: responseID});
+		};
 
 	};
 };

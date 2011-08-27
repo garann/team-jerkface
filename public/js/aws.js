@@ -20,7 +20,7 @@ var aws = (function(){
 		scores: []
 	};
 
-	this.render = function() {
+	this.render = (function() {
 		var rend = this;
 		
 		this.init = function() {
@@ -103,10 +103,10 @@ var aws = (function(){
 		}
 
 		return this;
-	};
+	})();
 
 	this.sio = io.connect();
-	this.events = function() {
+	this.events = (function() {
 		
 		sio.on("gameStarted", function(d) {
 			// change state
@@ -165,6 +165,8 @@ var aws = (function(){
 
 		return this;
 
-	};
+	})();
+
+	this.render.init();
 	return this;
 })();

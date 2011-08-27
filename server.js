@@ -34,7 +34,6 @@ var app = express.createServer(
 );
 
 io = io.listen(app);
-game.init(io);
 everyauth.helpExpress(app);
 app.configure(function () { 
   app.set('view engine', 'html');

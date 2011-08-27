@@ -63,18 +63,14 @@ io.sockets.on('connection', function (socket) {
   
   session_store.get(sid, function (err, res) {
     if (!res.uid) return;
+    game.join(id, function (err, channel_name) {
+      if (err) 
+      socket.join(channel_name);
 
-    
-  });
-
-  return;
-  if (!uid) return;
-  
-  game.join(id, function (err, channel_name) {
-    socket.join(channel_name);
-    
-    socket.on('msg', function (msg) {
-      socket.broadcast.to(channel_name).emit('msg', { uid: uid, msg: msg });
+      // chat
+      socket.on('msg', function (msg) {
+        socket.broadcast.to(channel_name).emit('msg', { uid: uid, msg: msg });
+      });
     });
   });
     //channel.find(uid, function(err, ch) {

@@ -57,7 +57,13 @@ app.get('/index', function(req, res) {
                         throw new Error(err);
                 });
             }
-            res.render('index', { players: users, userInfo: req.session.uid });
+            console.log(users);
+            usersLong = [];
+            users.map(function(u) {
+                usersLong.push({ username: u });
+            });
+            console.log(usersLong);
+            res.render('index', { players: usersLong, userInfo: { username: req.session.uid } });
         });
     });
 });

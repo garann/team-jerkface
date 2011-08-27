@@ -1,4 +1,4 @@
-var aws = (function(){
+var aws = (function($){
 	var that = this,
 		$body = $("body"),
 		$roster = $("#players"),
@@ -24,19 +24,19 @@ var aws = (function(){
 		var rend = this;
 		
 		this.init = function() {
-			loadTmpl("templates/rosterTmpl","rosterTmpl");
-			loadTmpl("templates/lettersTmpl","lettersTmpl");
-			loadTmpl("templates/responseTmpl","responseTmpl");
-			loadTmpl("templates/voteTmpl","voteTmpl");
-			loadTmpl("templates/summaryTmpl","summaryTmpl");
-			loadTmpl("templates/scoresTmpl","scoresTmpl");
+			loadTmpl("/templates/rosterTmpl.html","rosterTmpl");
+			loadTmpl("/templates/lettersTmpl.html","lettersTmpl");
+			loadTmpl("/templates/responseTmpl.html","responseTmpl");
+			loadTmpl("/templates/voteTmpl.html","voteTmpl");
+			loadTmpl("/templates/summaryTmpl.html","summaryTmpl");
+			loadTmpl("/templates/scoresTmpl.html","scoresTmpl");
 
-			$.live("body.playing #btnRespond", "click", function(e) {
+			$("body.playing #btnRespond").live("click", function(e) {
 				e.preventDefault();
 				that.events.submitResponse($("#txtResponse").val());
 			});
 
-			$.live("body.voting input.btnVote", "click", function(e) {
+			$("body.voting input.btnVote").live("click", function(e) {
 				e.preventDefault();
 				that.events.submitVote($(this).data("id"));
 			});
@@ -169,4 +169,4 @@ var aws = (function(){
 
 	this.render.init();
 	return this;
-})();
+})(jQuery);

@@ -4,14 +4,14 @@ var aws = {
 		$roster = $("#players"),
 		$game = $("#gameStage"),
 		$resp = $("#responseStage"),
-		$vote = $("#vote");
+		$vote = $("#vote")
+		config = JSON.parse($("#config").html());
 
 	this.state = 0;
 	this.userInfo = {};
 	this.currentRound = {
 		responses: null,
 		letters: null,
-		started: null,
 		length: null // get this from config
 	};
 	this.roomInfo = {
@@ -109,7 +109,6 @@ var aws = {
 			// render letters
 			that.roomInfo.round++;
 			that.currentRound.letters = d.letters;
-			that.currentRound.started = d.started;
 			// render response stage 
 			$.publish("roundStarted");
 		});

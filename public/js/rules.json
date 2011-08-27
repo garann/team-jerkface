@@ -3,4 +3,7 @@
   , "max_players": 30
   , "min_acr_size": 4
   , "max_acr_size": 7
+  , "response_length": 300
+  , "response_time": 60000
+  , "vote_time": 30000
 }

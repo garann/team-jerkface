@@ -5,6 +5,19 @@ config = require './config'
 class Channel extends EventEmitter
   list: -> "users-#{@name}"
 
+  get_round: (cb) ->
+    $redis.hget "channel-round", @name, (err, round) ->
+      cb err, round || 0
+  
+  next_round: ->
+    self = this
+    $redis.hincrby "channel-round", @name, 1, (err, round) ->
+      if round > config.rules.max_rounds
+        $redis.hset "channel-round", self.name, 0
+        self.emit "error", "round number exceeded max rounds"
+      else
+        console.log "channel #{self.name} entered round #{round}"
+
   add_user: (uid) ->
     self = this
     $redis.rpush @list(), uid, (err, len) ->
@@ -13,6 +26,9 @@ class Channel extends EventEmitter
       else
         console.log "channel: #{self.name} (#{len}) - new player: #{uid}"
         self.emit 'new player', uid
+
+  get_users: (cb) ->
+    $redis.lrange @list(), 0, -1, (err, users) -> users
 
   constructor: (@game, @name) ->
     self = this

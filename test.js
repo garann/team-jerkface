@@ -31,7 +31,7 @@ game.join(null, 'broasaurus_rex', function (err, chan) {
   });
   game.join(chan.name, 'bronameth', function (err, chan) {
     game.join(chan.name, 'bro', function (err, chan) {
-  
+      chan.get_users(console.log)
     });
   });
 });

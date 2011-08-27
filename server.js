@@ -10,9 +10,9 @@ var http = require('http')
   , io = require('socket.io')
   , game = require('./lib/game')
   , config = require('./lib/config')
-, AcroLetters = require('./lib/AcroLetters.js').AcroLetters
-, acro = new AcroLetters()
-, game = require('./lib/game')
+  , AcroLetters = require('./lib/AcroLetters.js').AcroLetters
+  , acro = new AcroLetters()
+  , game = require('./lib/game')
   , users = {};
 
 everyauth
@@ -53,15 +53,15 @@ app.get('/:channel?', function (req, res) {
   console.log(req.session)
 });
 
-channel.on('enoughForGame', function(ch) {
-    io.sockets.in(ch).emit('gameStarted', {});
-    channel.round.nextRound();
-});
+//channel.on('enoughForGame', function(ch) {
+    //io.sockets.in(ch).emit('gameStarted', {});
+    //channel.round.nextRound();
+//});
 
-channel.round.on('start', function(ch) {
-    io.sockets.in(ch).emit('roundStarted', {letters: acro.fetch()});
-    setTimeout(function() { io.sockets.in(ch).emit('roundEnded', {}); }, config.rules.response_time);
-});
+//channel.round.on('start', function(ch) {
+    //io.sockets.in(ch).emit('roundStarted', {letters: acro.fetch()});
+    //setTimeout(function() { io.sockets.in(ch).emit('roundEnded', {}); }, config.rules.response_time);
+//});
 
 io.sockets.on('connection', function (socket) {
   var cookie = connect.utils.parseCookie(socket.handshake.headers.cookie)
@@ -69,22 +69,22 @@ io.sockets.on('connection', function (socket) {
   
   if (!uid) return;
 
-    channel.find(uid, function(err, ch) {
-        if (!err) {
-            channel.findUsers(channel, function(err, users) {
-                if (users.length > 3)
-                    socket.emit('gameStarted', {});
-                if (!err) {
-                    socket.join(ch);
-                    io.sockets.in(channel).emit('rosterUpdated', users);
-                }
-            });
-        }
-    });
+    //channel.find(uid, function(err, ch) {
+        //if (!err) {
+            //channel.findUsers(channel, function(err, users) {
+                //if (users.length > 3)
+                    //socket.emit('gameStarted', {});
+                //if (!err) {
+                    //socket.join(ch);
+                    //io.sockets.in(channel).emit('rosterUpdated', users);
+                //}
+            //});
+        //}
+    //});
 
-    socket.on('responseSubmitted', function(data) {
-        //do something
-    });
+    //socket.on('responseSubmitted', function(data) {
+        ////do something
+    //});
 
 });
 

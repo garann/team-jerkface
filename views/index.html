@@ -5,6 +5,18 @@
 </head>
 <body>
 
+	<div id="players">
+		{{each players}}
+		<a class="player">{{= $value.username}}</a>
+		{{/each}}
+	</div>
+
+	<div id="play">
+		<div id="gameStage"></div>
+		<div id="responseStage"></div>
+	</div>
+
+
 </body>
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
 <script src="/socket.io/socket.io.js"></script>

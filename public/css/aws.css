@@ -10,3 +10,8 @@ header h3 { color: #cff; text-shadow: -2px 2px 3px #000; }
 .voting #vote { display: block; }
 .playing #vote,
 .voting #play { display: none;}
+
+#play { width: 60%; margin: 20px 20%; background-color: rgba(50,50,50,0.5); border-radius: 10px; }
+#gameStage { padding: 20px; text-align: center; }
+.letters { font-family: 'Slackey', cursive; color: #090; text-shadow: -2px 4px 5px #191919; font-size: 60px; }
+#responseStage textarea { background-color: #eee; width: 80%; margin: 10px 5%; padding: 5%; resize: none; font-family: helvetica, sans-serif; font-size: 20px; color: #333; border: none; border-radius: 10px; box-shadow: 0px 2px 3px #191919; }

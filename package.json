@@ -23,6 +23,7 @@
     , "nko": "~> 0.1.0"
     , "jade": "~> 0.15.2"
     , "everyauth": "~> 0.2.18"
+    , "jqtpl": "~> 1.0.1"
   },
   "devDependencies": {},
   "scripts": {

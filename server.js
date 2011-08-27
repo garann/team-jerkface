@@ -32,11 +32,15 @@ var app = express.createServer(
 
 io = io.listen(app);
 everyauth.helpExpress(app);
-app.configure(function () { app.set('view engine', 'jade'); });
+app.configure(function () { 
+  app.set('view engine', 'html');
+  app.set('view options', {layout: false});
+  app.register('.html', require('jqtpl').express) 
+});
 
 app.get('/:channel?', function (req, res) {
     game.getChannel(req.params.channel, function(err) {
-        res.render('home', {req.params.channel, error: err});
+        res.render('home', {params: req.params.channel, error: err});
     });
 
   // save session data to redis instead of this

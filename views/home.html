@@ -1,0 +1,22 @@
+<!doctype html>
+<html>
+<head>
+	<title>acronyms with strangers</title>
+	<link href="css/normalize.css" rel="stylesheet" />
+	<link href="css/aws.css" rel="stylesheet" />
+</head>
+<body>
+
+{{if !params.everyauth.loggedIn}}
+<h2>Not Authenticated</h2>
+<div id="register">
+	<a href="/auth/twitter"><img style="border: 0px" src="https://si0.twimg.com/images/dev/buttons/sign-in-with-twitter-l.png" /></a>
+</div>
+{{else}}
+<h3><a href="/logout">Logout</a></h3>
+<h1>you're logged in bro!</h1>
+<div id="content"></div>
+{{/if}}
+
+</body>
+</html>

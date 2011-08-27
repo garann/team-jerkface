@@ -3,11 +3,13 @@ var aws = {
 		$body = $("body"),
 		$roster = $("#players"),
 		$game = $("#gameStage"),
-		$resp = $("#responseStage");
+		$resp = $("#responseStage"),
+		$vote = $("#vote");
 
 	this.state = 0;
 	this.userInfo = {};
 	this.currentRound = {
+		responses: null,
 		letters: null,
 		started: null,
 		length: null // get this from config
@@ -32,11 +34,11 @@ var aws = {
 			
 		};
 
-		this.responseTimer = function(startTime, length) {
+		this.responseTimer = function(startTime) {
 			
 		};
 
-		this.voteTimer = function() {
+		this.voteTimer = function(startTime) {
 			
 		};
 
@@ -54,8 +56,15 @@ var aws = {
 			$game.html($.tmpl("lettersTmpl",that.currentRound.letters;
 			$resp.html($.tmpl("responseTmpl",null));
 			rend.enableResponse();
-			rend.responseTimer(that.currentRound.started, that.currentRound.length);
+			rend.responseTimer(that.currentRound.started);
 			$body.addClass("playing");
+		});
+
+		$.subscribe("votingStarted",function() {
+			$vote.html($.tmpl("voteTmpl",that.currentRound.responses));
+			rend.enableVote();
+			rend.voteTimer(Date.now());
+			$body.addClass("voting");
 		});
 
 	};
@@ -95,7 +104,8 @@ var aws = {
 
 		sio.on("votingStart", function(d) {
 			// render response list
-			// wire-up voting controls
+			that.currentRound.responses = d.responses;
+			$.publish("votingStarted");
 		});
 
 		//sio.on("voteSubmitted", function(d) {

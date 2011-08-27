@@ -17,8 +17,10 @@ class Channel extends EventEmitter
       if round > config.rules.max_rounds
         $redis.hset "channel-round", self.name, 0
         console.log "channel #{self.name} has reset"
+        self.emit 'round reset'
       else
         console.log "channel #{self.name} entered round #{round}"
+        self.emit 'new round'
       cb() if cb
 
   add_user: (uid) ->

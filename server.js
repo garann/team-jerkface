@@ -75,7 +75,14 @@ io.sockets.on('connection', function (socket) {
     if (!session || !session.uid || !session.channel) return;
 
       game.get_channel(session.channel.name, function(chan) {
+          console.log('joining: '+chan.name);
           socket.join(chan.name);
+
+          if (config.env == 'development') {
+              chan.add_user('bro1', function(){});
+              chan.add_user('bro2', function(){});
+          }
+
 
           chan.on('new user', function(uid) {
               chan.get_users(function(users) {

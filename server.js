@@ -24,7 +24,7 @@ everyauth
     .findOrCreateUser(function (sess, accessToken, accessSecret, twitUser) {
       return sess.uid = twitUser.screen_name;
     })
-    .redirectPath('/');
+    .redirectPath('/index');
 
 var app = express.createServer(
     express.bodyParser()
@@ -48,7 +48,8 @@ app.get('/', function (req, res) {
 });
 
 app.get('/index', function(req, res) {
-  res.render('index',{players: []});
+  console.log(req.session.uid);
+  res.render('index',{userInfo: {username: req.session.uid}, players: []});
 });
 
 io.sockets.on('connection', function (socket) {

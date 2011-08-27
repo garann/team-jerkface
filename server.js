@@ -4,11 +4,10 @@ var http = require('http')
   , $redis = require('./lib/adapter')
   , connect = require('connect')
   , everyauth = require('everyauth')
-  //, twitter = require('./lib/twitter')(everyauth)
   , express = require('express')
   , io = require('socket.io')
   , config = require('./lib/config')
-  , users = {}
+  , users = {};
 
 everyauth
   .twitter
@@ -28,14 +27,31 @@ var app = express.createServer(
   , everyauth.middleware()
 );
 
-io.listen(app);
+io = io.listen(app);
 everyauth.helpExpress(app);
 app.configure(function () { app.set('view engine', 'jade'); });
 
 app.get('/', function (req, res) {
-  //if (req.session.uid) users[req.cookies['connect.sid']] = req.session.uid;
+  // save session data to redis instead of this
+  console.log(req.session.uid)
+  if (req.session.uid) users[req.cookies['connect.sid']] = req.session.uid;
+  console.log(req.cookies)
+
   console.log(req.session)
   res.render('home');
+});
+
+io.sockets.on('connection', function (socket) {
+  var cookie = connect.utils.parseCookie(socket.handshake.headers.cookie)
+    , uid = users[cookie['connect.sid']];
+  
+  if (!uid) return;
+
+  socket.emit('auth', {uid: uid});
+  socket.broadcast.emit('msg', {uid: uid, msg: 'entered this sweet chat room'});
+  socket.on('msg', function (msg) {
+    socket.broadcast.emit('msg', {uid: uid, msg: msg});
+  });
 });
 
 app.listen(config.port); 

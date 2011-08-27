@@ -48,8 +48,18 @@ app.get('/', function (req, res) {
 });
 
 app.get('/index', function(req, res) {
-  console.log(req.session.uid);
-  res.render('index',{userInfo: {username: req.session.uid}, players: []});
+    game.available_channel(function(chan) {
+        chan.get_users(function(users) {
+            users.join(req.session.uid);
+            if (users.indexOf(req.session.uid) === -1) { //  if user isn't in channel add them
+                chan.add_user(req.session.uid, function(err) {
+                    if (err)
+                        throw new Error(err);
+                });
+            }
+            res.render('index', { players: users, userInfo: req.session.uid });
+        });
+    });
 });
 
 io.sockets.on('connection', function (socket) {
@@ -57,19 +67,9 @@ io.sockets.on('connection', function (socket) {
     , sid = cookie['connect.sid'];
   
   session_store.get(sid, function (err, session) {
-    if (!session || !session.uid) return;
+    if (!session || !session.uid || !session.channel) return;
 
-      var chanCB = function(chan) {
-
-          chan.get_users(function(users) {
-              if (users.indexOf(session.uid) === -1) { //  if user isn't in channel add them
-                  chan.add_user(session.uid);
-              } else {
-                  chan.get_users(function(users) {
-                      io.sockets.in(chan.name).emit('rosterUpdated', users);                      
-                  });
-              }
-          });
+      game.get_channel(session.channel.name, function(chan) {
 
           chan.on('new user', function(uid) {
               chan.get_users(function(users) {
@@ -105,13 +105,7 @@ io.sockets.on('connection', function (socket) {
               console.log(error);
           });
 
-      }
-
-      if (session.channel) {
-          game.get_channel(session.channel, chanCB);
-      } else {
-          game.available_channel(chanCB);
-      }
+      });
 
       socket.on('responseSubmitted', function(data) {
           // collect responses

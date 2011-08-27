@@ -7,6 +7,9 @@ var http = require('http')
   , express = require('express')
   , io = require('socket.io')
   , config = require('./lib/config')
+, AcroLetters = require('./lib/AcroLetters.js').AcroLetters
+, acro = new AcroLetters()
+, game = require('./lib/game')
   , users = {};
 
 everyauth
@@ -31,14 +34,26 @@ io = io.listen(app);
 everyauth.helpExpress(app);
 app.configure(function () { app.set('view engine', 'jade'); });
 
-app.get('/', function (req, res) {
+app.get('/:channel?', function (req, res) {
+    game.getChannel(req.params.channel, function(err) {
+        res.render('home', {req.params.channel, error: err});
+    });
+
   // save session data to redis instead of this
   console.log(req.session.uid)
   if (req.session.uid) users[req.cookies['connect.sid']] = req.session.uid;
   console.log(req.cookies)
-
   console.log(req.session)
-  res.render('home');
+});
+
+channel.on('enoughForGame', function(ch) {
+    io.sockets.in(ch).emit('gameStarted', {});
+    channel.round.nextRound();
+});
+
+channel.round.on('start', function(ch) {
+    io.sockets.in(ch).emit('roundStarted', {letters: acro.fetch()});
+    setTimeout(function() { io.sockets.in(ch).emit('roundEnded', {}); }, config.rules.response_time);
 });
 
 io.sockets.on('connection', function (socket) {
@@ -47,11 +62,23 @@ io.sockets.on('connection', function (socket) {
   
   if (!uid) return;
 
-  socket.emit('auth', {uid: uid});
-  socket.broadcast.emit('msg', {uid: uid, msg: 'entered this sweet chat room'});
-  socket.on('msg', function (msg) {
-    socket.broadcast.emit('msg', {uid: uid, msg: msg});
-  });
+    channel.find(uid, function(err, ch) {
+        if (!err) {
+            channel.findUsers(channel, function(err, users) {
+                if (users.length > 3)
+                    socket.emit('gameStarted', {});
+                if (!err) {
+                    socket.join(ch);
+                    io.sockets.in(channel).emit('rosterUpdated', users);
+                }
+            });
+        }
+    });
+
+    socket.on('responseSubmitted', function(data) {
+        //do something
+    });
+
 });
 
 app.listen(config.port); 

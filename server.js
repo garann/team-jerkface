@@ -38,6 +38,7 @@ var app = express.createServer(
 io = io.listen(app);
 everyauth.helpExpress(app);
 app.configure(function () { 
+  app.set('views', __dirname + '/views')
   app.set('view engine', 'html');
   app.set('view options', {layout: false});
   app.register('.html', require('jqtpl').express) 

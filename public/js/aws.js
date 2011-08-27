@@ -4,7 +4,8 @@ var aws = {
 		$roster = $("#players"),
 		$game = $("#gameStage"),
 		$resp = $("#responseStage"),
-		$vote = $("#vote")
+		$vote = $("#vote"),
+		$time = $("#timer"),
 		config = JSON.parse($("#config").html());
 
 	this.state = 0;
@@ -43,11 +44,27 @@ var aws = {
 		};
 
 		this.responseTimer = function(startTime) {
-			
+			var endTime = startTime.getTime() + config.response_time,
+				responseT = setInterval(function() {
+					var n = Date.now().getTime(),
+						t = new Date(endTime - n);
+					if (t > 0)
+						$timer.text("0:" + t.getSeconds());
+					else
+						clearInterval(responseT);
+				}, 1000);
 		};
 
 		this.voteTimer = function(startTime) {
-			
+			var endTime = startTime.getTime() + config.vote_time,
+				voteT = setInterval(function() {
+					var n = Date.now().getTime(),
+						t = new Date(endTime - n);
+					if (t > 0)
+						$timer.text("0:" + t.getSeconds());
+					else
+						clearInterval(voteT);
+				}, 1000);
 		};
 
 		this.clear = function() {
@@ -65,7 +82,7 @@ var aws = {
 		$.subscribe("roundStarted",function() {
 			$game.html($.tmpl("lettersTmpl",{letters: that.currentRound.letters}));
 			$resp.html($.tmpl("responseTmpl",null));
-			rend.responseTimer(that.currentRound.started);
+			rend.responseTimer(Date.now());
 			$body.addClass("playing");
 		});
 

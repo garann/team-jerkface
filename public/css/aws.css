@@ -1,5 +1,6 @@
 body { background-color: #333; margin: 0px; padding: 20px; color: #eee; }
-h1, h2, h3 { font-family: 'Slackey', cursive; color: #ccc; }
+h1, h2, h3 { font-family: 'Slackey', cursive; color: #ddd; text-shadow: -2px 2px 3px #191919; }
+a { color: #f06; text-decoration: none; }
 
 .playing #play,
 .voting #vote { display: block; }

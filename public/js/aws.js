@@ -1,4 +1,4 @@
-var aws = {
+var aws = ({
 	var that = this,
 		$body = $("body"),
 		$roster = $("#players"),
@@ -12,8 +12,7 @@ var aws = {
 	this.userInfo = {};
 	this.currentRound = {
 		responses: null,
-		letters: null,
-		length: null // get this from config
+		letters: null
 	};
 	this.roomInfo = {
 		users: [],
@@ -44,27 +43,11 @@ var aws = {
 		};
 
 		this.responseTimer = function(startTime) {
-			var endTime = startTime.getTime() + config.response_time,
-				responseT = setInterval(function() {
-					var n = Date.now().getTime(),
-						t = new Date(endTime - n);
-					if (t > 0)
-						$timer.text("0:" + t.getSeconds());
-					else
-						clearInterval(responseT);
-				}, 1000);
+			timer(startTime, config.response_time);
 		};
 
 		this.voteTimer = function(startTime) {
-			var endTime = startTime.getTime() + config.vote_time,
-				voteT = setInterval(function() {
-					var n = Date.now().getTime(),
-						t = new Date(endTime - n);
-					if (t > 0)
-						$timer.text("0:" + t.getSeconds());
-					else
-						clearInterval(voteT);
-				}, 1000);
+			timer(startTime, config.vote_time);
 		};
 
 		this.clear = function() {
@@ -107,6 +90,18 @@ var aws = {
 			}, "html");
 		}
 
+		function timer(startTime, timeLength) {
+			var endTime = startTime.getTime() + timeLength,
+				timerT = setInterval(function() {
+					var n = Date.now().getTime(),
+						t = new Date(endTime - n);
+					if (t > 0)
+						$timer.text("0:" + t.getSeconds());
+					else
+						clearInterval(timerT);
+				}, 1000);
+		}
+
 	};
 
 	this.sio = io.connect();
@@ -136,22 +131,18 @@ var aws = {
 
 		sio.on("roundEnded", function(d) {
 			that.render.clear();
+			that.currentRound.responses = d.responses;
+			$.publish("roundSummary");
 		});
 
-		sio.on("votingStart", function(d) {
+		sio.on("votingStarted", function(d) {
 			// render response list
 			that.currentRound.responses = d.responses;
 			$.publish("votingStarted");
 		});
 
-		sio.on("votingEnd", function(d) {
+		sio.on("votingEnded", function(d) {
 			that.render.clear();
-		});
-
-		sio.on("roundSummary", function(d) {
-			// render responses
-			that.currentRound.responses = d.responses;
-			$.publish("roundSummary");
 		});
 
 		sio.on("gameEnded", function(d) {
@@ -172,4 +163,5 @@ var aws = {
 		};
 
 	};
-};
+	return this;
+})();

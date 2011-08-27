@@ -47,6 +47,10 @@ app.get('/', function (req, res) {
   res.render('home');
 });
 
+app.get('/index', function(req, res) {
+  res.render('index',{players: []});
+});
+
 //channel.on('enoughForGame', function(ch) {
     //io.sockets.in(ch).emit('gameStarted', {});
     //channel.round.nextRound();

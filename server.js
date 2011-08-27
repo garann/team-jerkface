@@ -51,49 +51,75 @@ app.get('/index', function(req, res) {
   res.render('index',{players: []});
 });
 
-//channel.on('enoughForGame', function(ch) {
-    //io.sockets.in(ch).emit('gameStarted', {});
-    //channel.round.nextRound();
-//});
-
-//channel.round.on('start', function(ch) {
-    //io.sockets.in(ch).emit('roundStarted', {letters: acro.fetch()});
-    //setTimeout(function() { io.sockets.in(ch).emit('roundEnded', {}); }, config.rules.response_time);
-//});
-
 io.sockets.on('connection', function (socket) {
   var cookie = connect.utils.parseCookie(socket.handshake.headers.cookie)
     , sid = cookie['connect.sid'];
   
   session_store.get(sid, function (err, session) {
-    console.log('socket.io session: ', session);
     if (!session || !session.uid) return;
-    //game.join(id, function (err, channel_name) {
-      //if (err) 
-      //socket.join(channel_name);
 
-      //// chat
-      //socket.on('msg', function (msg) {
-        //socket.broadcast.to(channel_name).emit('msg', { uid: uid, msg: msg });
-      //});
-    //});
+      var chanCB = function(chan) {
+
+          chan.get_users(function(users) {
+              if (users.indexOf(session.uid) != -1) { //  if user isn't in channel add them
+                  chan.add_user(session.uid);
+              }
+          });
+
+          chan.on('new user', function(uid) {
+              chan.get_users(function(users) {
+                  io.socket.on(chan.name).emit('rosterUpdated', users);
+              });
+          });
+          
+          chan.on('game started', function() {
+              io.sockets.in(chan.name).emit('gameStarted', {});
+          });
+
+          chan.on('new round', function(acro) {
+              io.sockets.in(chan.name).emit('roundStarted', {letters: acro});
+              setTimeout(function() {
+                  //get responses[] = {username,  response, votes}
+                  // if responses.length ( kill room )
+                  io.sockets.in(chan.name).emit('roundEnded', {});
+                  io.sockets.in(chan.name).emit('votingStart', {});
+
+                  setTimeout(function() {
+                      io.sockets.in(chan.name).emit('votingEnded', {});
+                  }, config.rules.vote_time);
+
+              }, config.rules.response_time);
+          });
+
+          chan.on('round reset', function() {
+              //get scores[] = {username, score}
+              io.sockets.in(chan.name).emit('gameEnded', {});
+          });
+
+          chan.on('error', function(error) {
+              console.log(error);
+          });
+
+      }
+
+      if (session.channel) {
+          game.get_channel(session.channel, chanCB);
+      } else {
+          game.available_channel(chanCB);
+      }
+
+      socket.on('responseSubmitted', function(data) {
+          // collect responses
+      });
+
+      socket.on('voteSubmitted', function(data) {
+          // collect votes
+      });
+
+      socket.on('msg', function(msg) {
+          socket.broadcast.to(chan.name).emit('msg', {uid: session.uid, msg: msg});
+      });
   });
-    //channel.find(uid, function(err, ch) {
-        //if (!err) {
-            //channel.findUsers(channel, function(err, users) {
-                //if (users.length > 3)
-                    //socket.emit('gameStarted', {});
-                //if (!err) {
-                    //socket.join(ch);
-                    //io.sockets.in(channel).emit('rosterUpdated', users);
-                //}
-            //});
-        //}
-    //});
-
-    //socket.on('responseSubmitted', function(data) {
-        ////do something
-    //});
 
 });
 

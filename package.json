@@ -8,8 +8,21 @@
     "url": "git://github.com/nko2/team-jerkface.git"
   },
   "engines": {
-    "node": "~v0.4.8"
+    "node": "~> 0.4.8"
   },
-  "dependencies": {},
-  "devDependencies": {}
+  "dependencies": {
+      "coffee-script": "~> 1.1.2"
+    , "connect": "~> 1.6.4"
+    , "connect-redis": "~> 1.0.7"
+    , "express": "~> 2.4.6"
+    , "hiredis": "~> 0.1.12"
+    , "redis": "~> 0.6.7"
+    , "restler": "~> 0.2.1"
+    , "socket.io": "~> 0.7.9"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "start": "node server.js"
+  },
+  "main": "server.js"
 }

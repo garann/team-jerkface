@@ -46,20 +46,20 @@ class Channel extends EventEmitter
   add_user: (uid) ->
     self = this
     $redis.rpush @list, uid, (err, len) ->
-      if len > config.rules.max_players
-        self.emit 'error', 'too many players'
+      if len > config.rules.max_users
+        self.emit 'error', 'too many users'
         self.remove_available()
       else
-        self.log "(#{len}) - new player: #{uid}"
-        self.emit 'new player', uid
-        if len >= config.rules.min_players
+        self.log "(#{len}) - new user: #{uid}"
+        self.emit 'new user', uid
+        if len >= config.rules.min_users
           self.get_round (round) ->
             self.next_round(-> self.emit 'game started') if round == 0
-        if len < config.rules.max_players
+        if len < config.rules.max_users
           self.make_available()
         else
           self.remove_available()
-  
+
   has_user: (user, cb) ->
     @get_users (users) ->
       cb user in users
@@ -74,8 +74,8 @@ class Channel extends EventEmitter
     $redis.llen @list, (err, len) ->
       throw err if err?
       self.log "STARTED with #{len} users"
-      if len >= config.rules.max_players
-        self.emit 'error', 'too many players'
+      if len >= config.rules.max_users
+        self.emit 'error', 'too many users'
       else
         self.emit 'ready'
 

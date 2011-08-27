@@ -61,14 +61,18 @@ io.sockets.on('connection', function (socket) {
       var chanCB = function(chan) {
 
           chan.get_users(function(users) {
-              if (users.indexOf(session.uid) != -1) { //  if user isn't in channel add them
+              if (users.indexOf(session.uid) === -1) { //  if user isn't in channel add them
                   chan.add_user(session.uid);
+              } else {
+                  chan.get_users(function(users) {
+                      io.sockets.in(chan.name).emit('rosterUpdated', users);                      
+                  });
               }
           });
 
           chan.on('new user', function(uid) {
               chan.get_users(function(users) {
-                  io.socket.on(chan.name).emit('rosterUpdated', users);
+                  io.sockets.in(chan.name).emit('rosterUpdated', users);
               });
           });
           

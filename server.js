@@ -74,9 +74,6 @@ io.sockets.on('connection', function (socket) {
   session_store.get(sid, function (err, session) {
     if (!session || !session.uid || !session.channel) return;
 
-          console.log("hi");
-
-
       game.get_channel(session.channel.name, function(chan) {
           chan.on('new user', function(uid) {
               chan.get_users(function(users) {

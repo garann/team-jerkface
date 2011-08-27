@@ -22,7 +22,6 @@ everyauth
     .consumerKey(config.twitter_key)
     .consumerSecret(config.twitter_secret)
     .findOrCreateUser(function (sess, accessToken, accessSecret, twitUser) {
-      console.log(sess)
       return sess.uid = twitUser.screen_name;
     })
     .redirectPath('/');
@@ -63,7 +62,8 @@ io.sockets.on('connection', function (socket) {
     , sid = cookie['connect.sid'];
   
   session_store.get(sid, function (err, res) {
-    if (!res.uid) return;
+    console.log(res);
+    if (!res || !res.uid) return;
     game.join(id, function (err, channel_name) {
       if (err) 
       socket.join(channel_name);

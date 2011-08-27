@@ -1,37 +1,15 @@
 require('coffee-script'); // dont hate
 
-var Game = require('./lib/game')
-  , game = new Game();
+var game = require('./lib/game')
+  , numbros = 0;
 
-game.join(null, 'broasaurus_rex', function (err, chan) {
-  game.join(chan.name, 'bronameth', function (err, chan) {
-    game.join(chan.name, 'bro', function (err, chan) {
-  
+setInterval(function () {
+  game.available_channel(function (channel) {
+    channel.on('error', function (err) { console.log(err); })
+    channel.get_users(function (users) {
+      console.log(users);
+      console.log(users.indexOf('bro') !== -1)
+      channel.add_user('bro')
     });
   });
-  game.join(chan.name, 'bronameth', function (err, chan) {
-    game.join(chan.name, 'bro', function (err, chan) {
-      chan.get_users(console.log)
-    });
-  });
-  game.join(chan.name, 'bronameth', function (err, chan) {
-    game.join(chan.name, 'bro', function (err, chan) {
-  
-    });
-  });
-  game.join(chan.name, 'bronameth', function (err, chan) {
-    game.join(chan.name, 'bro', function (err, chan) {
-  
-    });
-  });
-  game.join(chan.name, 'bronameth', function (err, chan) {
-    game.join(chan.name, 'bro', function (err, chan) {
-  
-    });
-  });
-  game.join(chan.name, 'bronameth', function (err, chan) {
-    game.join(chan.name, 'bro', function (err, chan) {
-      
-    });
-  });
-});
+}, 500);

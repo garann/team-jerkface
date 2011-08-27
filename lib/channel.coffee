@@ -73,7 +73,7 @@ class Channel extends EventEmitter
     @emit 'error', "name can't be blank" if @name?.length == 0
     $redis.llen @list, (err, len) ->
       throw err if err?
-      self.log "STARTED with #{len} users"
+      self.log "initialized with #{len} users"
       if len >= config.rules.max_players
         self.emit 'error', 'too many players'
       else

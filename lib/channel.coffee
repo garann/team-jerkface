@@ -26,6 +26,8 @@ class Channel extends EventEmitter
       else
         console.log "channel: #{self.name} (#{len}) - new player: #{uid}"
         self.emit 'new player', uid
+        if len < config.rules.max_players
+          $redis.sadd 'game:available-channels', self.name
 
   get_users: (cb) ->
     $redis.lrange @list(), 0, -1, (err, users) -> cb users

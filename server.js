@@ -9,11 +9,11 @@ var http = require('http')
   , express = require('express')
   , RedisStore = require('connect-redis')(express)
   , io = require('socket.io')
-  , game = require('./lib/game')
   , config = require('./lib/config')
   , AcroLetters = require('./lib/AcroLetters.js').AcroLetters
   , acro = new AcroLetters()
   , game = require('./lib/game')
+  , session_store = new RedisStore()
   , users = {};
 
 everyauth
@@ -31,7 +31,7 @@ var app = express.createServer(
     express.bodyParser()
   , express.static(__dirname + "/public")
   , express.cookieParser()
-  , express.session({ secret: 'really secret, bro', store: new RedisStore })
+  , express.session({ secret: 'really secret, bro', store: session_store })
   , everyauth.middleware()
 );
 
@@ -44,7 +44,6 @@ app.configure(function () {
 });
 
 app.get('/', function (req, res) {
-  if (req.session.uid) users[req.cookies['connect.sid']] = req.session.uid;
   res.render('home');
 });
 
@@ -60,10 +59,24 @@ app.get('/', function (req, res) {
 
 io.sockets.on('connection', function (socket) {
   var cookie = connect.utils.parseCookie(socket.handshake.headers.cookie)
-    , uid = users[cookie['connect.sid']];
+    , sid = cookie['connect.sid'];
   
-  if (!uid) return;
+  session_store.get(sid, function (err, res) {
+    if (!res.uid) return;
 
+    
+  });
+
+  return;
+  if (!uid) return;
+  
+  game.join(id, function (err, channel_name) {
+    socket.join(channel_name);
+    
+    socket.on('msg', function (msg) {
+      socket.broadcast.to(channel_name).emit('msg', { uid: uid, msg: msg });
+    });
+  });
     //channel.find(uid, function(err, ch) {
         //if (!err) {
             //channel.findUsers(channel, function(err, users) {

@@ -1,0 +1,6 @@
+
+
+.playing #play,
+.voting #vote { display: block; }
+.playing #vote,
+.voting #play { display: none;}

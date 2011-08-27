@@ -1,5 +1,6 @@
 var aws = {
 	var that = this,
+		$body = $("body"),
 		$roster = $("#players"),
 		$game = $("#gameStage"),
 		$resp = $("#responseStage");
@@ -39,6 +40,12 @@ var aws = {
 			
 		};
 
+		this.clear = function() {
+			$game.html("");
+			$resp.html("");
+			$body.removeClass("playing").removeClass("voting");
+		};
+
 		$.subscribe("rosterUpdated",function() {
 			$roster.html($.tmpl("rosterTmpl",that.roomInfo.users));
 		});
@@ -48,6 +55,7 @@ var aws = {
 			$resp.html($.tmpl("responseTmpl",null));
 			rend.enableResponse();
 			rend.responseTimer(that.currentRound.started, that.currentRound.length);
+			$body.addClass("playing");
 		});
 
 	};
@@ -82,8 +90,7 @@ var aws = {
 		});
 
 		sio.on("roundEnded", function(d) {
-			// destroy game stage
-			// destroy response stage
+			that.render.clear();
 		});
 
 		sio.on("votingStart", function(d) {
@@ -96,8 +103,7 @@ var aws = {
 		//});
 
 		sio.on("votingEnd", function(d) {
-			// destroy response list
-			// destroy voting controls
+			that.render.clear();
 		});
 
 		sio.on("roundSummary", function(d) {

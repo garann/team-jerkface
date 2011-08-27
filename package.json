@@ -1,0 +1,15 @@
+{
+  "author": "clifton, garann, phillip, seth",
+  "name": "acronyms",
+  "description": "acronyms with friends!",
+  "version": "0.0.0",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/nko2/team-jerkface.git"
+  },
+  "engines": {
+    "node": "~v0.4.8"
+  },
+  "dependencies": {},
+  "devDependencies": {}
+}

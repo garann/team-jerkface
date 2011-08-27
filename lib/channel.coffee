@@ -28,7 +28,7 @@ class Channel extends EventEmitter
         self.emit 'new player', uid
 
   get_users: (cb) ->
-    $redis.lrange @list(), 0, -1, (err, users) -> users
+    $redis.lrange @list(), 0, -1, (err, users) -> cb users
 
   constructor: (@game, @name) ->
     self = this

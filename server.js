@@ -61,18 +61,18 @@ io.sockets.on('connection', function (socket) {
   var cookie = connect.utils.parseCookie(socket.handshake.headers.cookie)
     , sid = cookie['connect.sid'];
   
-  session_store.get(sid, function (err, res) {
-    console.log(res);
-    if (!res || !res.uid) return;
-    game.join(id, function (err, channel_name) {
-      if (err) 
-      socket.join(channel_name);
+  session_store.get(sid, function (err, session) {
+    console.log('socket.io session: ', session);
+    if (!session || !session.uid) return;
+    //game.join(id, function (err, channel_name) {
+      //if (err) 
+      //socket.join(channel_name);
 
-      // chat
-      socket.on('msg', function (msg) {
-        socket.broadcast.to(channel_name).emit('msg', { uid: uid, msg: msg });
-      });
-    });
+      //// chat
+      //socket.on('msg', function (msg) {
+        //socket.broadcast.to(channel_name).emit('msg', { uid: uid, msg: msg });
+      //});
+    //});
   });
     //channel.find(uid, function(err, ch) {
         //if (!err) {

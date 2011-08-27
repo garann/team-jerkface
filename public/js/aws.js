@@ -24,7 +24,12 @@ var aws = {
 		var rend = this;
 		
 		this.init = function() {
-			
+			loadTmpl("templates/rosterTmpl","rosterTmpl");
+			loadTmpl("templates/lettersTmpl","lettersTmpl");
+			loadTmpl("templates/responseTmpl","responseTmpl");
+			loadTmpl("templates/voteTmpl","voteTmpl");
+			loadTmpl("templates/summaryTmpl","summaryTmpl");
+			loadTmpl("templates/scoresTmpl","scoresTmpl");
 		};
 
 		this.enableResponse = function() {
@@ -76,6 +81,12 @@ var aws = {
 			$vote.html($.tmpl("scoresTmpl",that.roomInfo.scores));
 			$body.addClass("voting");
 		});
+
+		function loadTmpl(path, name) {
+			$.get(path,function(r) {
+				$.template(name, r);
+			}, "html");
+		}
 
 	};
 

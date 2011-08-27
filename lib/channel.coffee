@@ -9,16 +9,17 @@ class Channel extends EventEmitter
 
   get_round: (cb) ->
     $redis.hget "channel-round", @name, (err, round) ->
-      cb err, round || 0
-  
-  next_round: ->
+      cb round || 0
+
+  next_round: (cb) ->
     self = this
     $redis.hincrby "channel-round", @name, 1, (err, round) ->
       if round > config.rules.max_rounds
         $redis.hset "channel-round", self.name, 0
-        self.emit "error", "round number exceeded max rounds"
+        console.log "channel #{self.name} has reset"
       else
         console.log "channel #{self.name} entered round #{round}"
+      cb() if cb
 
   add_user: (uid) ->
     self = this
@@ -29,6 +30,9 @@ class Channel extends EventEmitter
       else
         console.log "channel: #{self.name} (#{len}) - new player: #{uid}"
         self.emit 'new player', uid
+        if len >= config.rules.min_players
+          self.get_round (round) ->
+            self.next_round(-> self.emit 'game started') if round == 0
         if len < config.rules.max_players
           self.make_available()
         else

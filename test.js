@@ -8,8 +8,7 @@ setInterval(function () {
     channel.on('error', function (err) { console.log(err); })
     channel.get_users(function (users) {
       console.log(users);
-      console.log(users.indexOf('bro') !== -1)
-      channel.add_user('bro')
+      channel.add_user('bro');
     });
   });
 }, 500);

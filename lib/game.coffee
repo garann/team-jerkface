@@ -4,21 +4,23 @@ Channel = require './channel'
 channels = {}
 
 module.exports =
-  available_channel: (cb) ->
-    $redis.srandmember 'game:available-channels', (err, name) ->
-      name = name || "channel-#{(Math.random() * 99999) >> .5}"
-      if channels[name]
+  get_channel: (name, cb) ->
+    if channels[name]
         cb channels[name]
       else
         channels[name] = new Channel name
         channels[name].on 'ready', ->
           cb channels[name]
 
+  available_channel: (cb) ->
+    self = this
+    $redis.srandmember 'game:available-channels', (err, name) ->
+      name = name || "channel-#{(Math.random() * 99999) >> .5}"
+      self.get_channel name, cb
+
   #join: (name, uid, cb) ->
     #self = this
     
-
-
     #$redis.srandmember 'game:available-channels', (err, name) ->
       #name = name || self.random_channel()
       #channel = channels[name] = channels[name] || new Channel name

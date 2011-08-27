@@ -7,6 +7,7 @@ var http = require('http')
   , connect = require('connect')
   , everyauth = require('everyauth')
   , express = require('express')
+  , RedisStore = require('connect-redis')(express)
   , io = require('socket.io')
   , game = require('./lib/game')
   , config = require('./lib/config')
@@ -21,6 +22,7 @@ everyauth
     .consumerKey(config.twitter_key)
     .consumerSecret(config.twitter_secret)
     .findOrCreateUser(function (sess, accessToken, accessSecret, twitUser) {
+      console.log(sess)
       return sess.uid = twitUser.screen_name;
     })
     .redirectPath('/');
@@ -29,7 +31,7 @@ var app = express.createServer(
     express.bodyParser()
   , express.static(__dirname + "/public")
   , express.cookieParser()
-  , express.session({ secret: 'really secret, bro'})
+  , express.session({ secret: 'really secret, bro', store: new RedisStore })
   , everyauth.middleware()
 );
 
@@ -42,15 +44,10 @@ app.configure(function () {
 });
 
 app.get('/:channel?', function (req, res) {
-    game.getChannel(req.params.channel, function(err) {
-        res.render('home', {params: req.params.channel, error: err});
-    });
-
-  // save session data to redis instead of this
-  console.log(req.session.uid)
+  //console.log(req)
   if (req.session.uid) users[req.cookies['connect.sid']] = req.session.uid;
-  console.log(req.cookies)
-  console.log(req.session)
+  res.render('home', {params: req.params.channel});
+  // save session data to redis instead of this
 });
 
 //channel.on('enoughForGame', function(ch) {

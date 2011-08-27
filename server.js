@@ -1,3 +1,5 @@
+require('coffee-script'); // don't hate, bro
+
 var http = require('http') 
   , nko = require('nko')('cx/IKz4MDPXythy2')
   , everyauth = require('everyauth')
@@ -6,6 +8,7 @@ var http = require('http')
   , everyauth = require('everyauth')
   , express = require('express')
   , io = require('socket.io')
+  , game = require('./lib/game')
   , config = require('./lib/config')
 , AcroLetters = require('./lib/AcroLetters.js').AcroLetters
 , acro = new AcroLetters()
@@ -31,6 +34,7 @@ var app = express.createServer(
 );
 
 io = io.listen(app);
+game.init(io);
 everyauth.helpExpress(app);
 app.configure(function () { 
   app.set('view engine', 'html');

@@ -1,4 +1,4 @@
-body { background-color: #333; margin: 0px; padding: 20px; color: #eee; }
+body { background: #333 url(/img/tactile_noise.png); margin: 0px; padding: 20px; color: #eee; }
 h1, h2, h3 { font-family: 'Slackey', cursive; color: #ddd; text-shadow: -2px 2px 3px #191919; }
 a { color: #f06; text-decoration: none; }
 

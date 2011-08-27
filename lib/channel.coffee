@@ -18,11 +18,12 @@ class Channel extends EventEmitter
     letters
 
   get_letters: (cb) ->
+    self = this
     $redis.hget "channel:letters", @name, (err, letters) ->
       if letters
         cb letters
       else
-        cb new_letters
+        cb self.new_letters()
 
   get_round: (cb) ->
     $redis.hget "channel-round", @name, (err, round) ->
@@ -72,7 +73,6 @@ class Channel extends EventEmitter
     @emit 'error', "name can't be blank" if @name?.length == 0
     $redis.llen @list, (err, len) ->
       throw err if err?
-      @size = len
       self.log "STARTED with #{len} users"
       if len >= config.rules.max_players
         self.emit 'error', 'too many players'

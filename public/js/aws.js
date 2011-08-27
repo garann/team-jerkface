@@ -1,4 +1,4 @@
-var aws = ({
+var aws = (function(){
 	var that = this,
 		$body = $("body"),
 		$roster = $("#players"),
@@ -20,7 +20,7 @@ var aws = ({
 		scores: []
 	};
 
-	this.render = {
+	this.render = function() {
 		var rend = this;
 		
 		this.init = function() {
@@ -38,7 +38,7 @@ var aws = ({
 
 			$.live("body.voting input.btnVote", "click", function(e) {
 				e.preventDefault();
-				that.events.submitVote($(this).data("id");
+				that.events.submitVote($(this).data("id"));
 			});
 		};
 
@@ -102,10 +102,11 @@ var aws = ({
 				}, 1000);
 		}
 
+		return this;
 	};
 
 	this.sio = io.connect();
-	this.events = {
+	this.events = function() {
 		
 		sio.on("gameStarted", function(d) {
 			// change state
@@ -161,6 +162,8 @@ var aws = ({
 		this.submitVote = function(responseID) {
 			sio.emit("voteSubmitted", {responseID: responseID});
 		};
+
+		return this;
 
 	};
 	return this;

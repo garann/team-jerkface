@@ -2,8 +2,24 @@
 <html>
 <head>
 	<title>acronyms with strangers</title>
+	<link href="css/normalize.css" rel="stylesheet" />
+	<link href="css/aws.css" rel="stylesheet" />
 </head>
 <body>
+
+	<div id="players">
+		{{each players}}
+		<a class="player">{{= $value.username}}</a>
+		{{/each}}
+	</div>
+
+	<div id="play">
+		<div id="gameStage"></div>
+		<div id="responseStage"></div>
+	</div>
+
+	<div id="vote"></div>
+
 
 </body>
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>

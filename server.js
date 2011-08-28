@@ -73,6 +73,7 @@ app.get('/index', function(req, res) {
 });
 
 game.on('new channel', function(chan) {
+    var haltGame = false;
     console.log(('new channel: '+chan.name).red);
     
     chan.on('new user', function(uid) {
@@ -193,8 +194,6 @@ io.sockets.on('connection', function (socket) {
       game.get_channel(session.channel.name, function(chan) {
           console.log('joining: '+chan.name.red);
           socket.join(chan.name);
-
-          var haltGame = false;
 
           chan.get_users(function(users) {
               if (users.indexOf(session.uid) === -1) { //  if user isn't in channel add them

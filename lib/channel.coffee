@@ -29,9 +29,10 @@ class Channel extends EventEmitter
 
   remove_previous_answer: (uid, round, cb) ->
     self = this
-    console.log "remove previous"
-    #$redis.hget ""
-    #cb()
+    $redis.hget "user_answer:#{@name}-#{round}", uid, (err, ans) ->
+      $redis.zrem "scores:#{self.name}-#{round}", ans if ans
+    $redis.hdel "user_answer:#{@name}-#{round}", uid, (err, resp) ->
+      self.log "#{uid}'s previous answer removed'" if resp
 
   # TODO same user submits two answers, replace old one
   submit_answer: (uid, answer, cb) ->

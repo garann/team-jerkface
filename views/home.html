@@ -8,16 +8,22 @@
 </head>
 <body>
 
-{{if !everyauth.loggedIn}}
-<h2>Not Authenticated</h2>
-<div id="register">
-	<a href="/auth/twitter"><img style="border: 0px" src="https://si0.twimg.com/images/dev/buttons/sign-in-with-twitter-l.png" /></a>
-</div>
-{{else}}
-<h3><a href="/logout">Logout</a></h3>
-<h1>you're logged in bro!</h1>
-<div id="content"></div>
-{{/if}}
+	<header>
+		<h3>Acronyms with Strangers</h3>
+	</header>
+
+	<div class="login">
+		{{if !everyauth.loggedIn}}
+		<h2>Not Authenticated</h2>
+		<div id="register">
+			<a href="/auth/twitter"><img style="border: 0px" src="https://si0.twimg.com/images/dev/buttons/sign-in-with-twitter-l.png" /></a>
+		</div>
+		<p>We promise not to send annoying auto-tweets, or <em>any</em> auto-tweets, or DMs, or stalk your friends, or go through your trash, or impersonate you at parties, or misuse your info in any other way we can think of.
+		{{else}}
+		<h1>Already logged in.</h1>
+		<h3><a href="/logout">Logout</a></h3>
+		{{/if}}
+	</div>
 
 </body>
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>

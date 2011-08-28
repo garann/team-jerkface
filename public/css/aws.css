@@ -29,10 +29,13 @@ header h3 { color: #cff; text-shadow: -2px 2px 3px #000; padding-left: 20px; }
 .playing #wait,
 .voting #wait { display: none; }
 
+#wait { padding: 20px; }
+
 #players { margin: 50px 5%; background-color: rgba(50,50,50,0.5); border-radius: 10px; text-align: center; padding: 10px 0px; }
 #players a { display: block; }
 #play,
-#vote { margin: 50px 5%; background-color: rgba(50,50,50,0.5); border-radius: 10px; }
+#vote,
+#wait { margin: 50px 5%; background-color: rgba(50,50,50,0.5); border-radius: 10px; }
 #gameStage { padding: 20px; text-align: center; }
 .letters { font-family: 'Slackey', Helvetica; text-transform: uppercase; color: #090; text-shadow: -2px 4px 5px #191919; font-size: 60px; -moz-animation: popin .5s 0s 1 forwards; -webkit-animation: popin .5s 0s 1 forwards; }
 #responseStage { overflow: hidden;}

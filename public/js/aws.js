@@ -52,7 +52,7 @@ var aws = (function($){
 			$body
 				.removeClass("playing")
 				.removeClass("voting");
-			that.clearTimer;
+			that.clearTimer();
 		};
 
 		this.timer = function(t) {
@@ -114,12 +114,14 @@ var aws = (function($){
 		
 		sio.on("gameStarted", function(d) {
 			// change state
+			console.log("game started");
 		});
 
 		sio.on("rosterUpdated", function(d) {
 			// re-render roster
 			that.roomInfo.users = d.users;
 			$.publish("rosterUpdated");
+			console.log("roster updated");
 		});
 
 		sio.on("roundStarted", function(d) {
@@ -129,6 +131,7 @@ var aws = (function($){
 			that.currentRound.letters = d.letters;
 			// render response stage 
 			$.publish("roundStarted");
+			console.log("round started");
 		});
 
 		sio.on("responseError", function(d) {
@@ -138,23 +141,27 @@ var aws = (function($){
 
 		sio.on("roundEnded", function(d) {
 			that.render.clear();
+			console.log("round ended");
 		});
 
 		sio.on("votingStarted", function(d) {
 			// render response list
 			that.currentRound.responses = d.responses;
 			$.publish("votingStarted");
+			console.log("voting started");
 		});
 
 		sio.on("votingEnded", function(d) {
 			that.render.clear();
 			that.currentRound.responses = d.responses;
 			$.publish("roundSummary");
+			console.log("voting ended");
 		});
 
 		sio.on("gameEnded", function(d) {
 			that.roomInfo.scores = d.scores;
 			$.publish("gameEnded");
+			console.log("game ended");
 		});
 
 		sio.on("serverError", function(d) {

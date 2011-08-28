@@ -16,7 +16,8 @@ letters_for_answer = (answer) ->
   final
 
 class Channel extends EventEmitter
-  log: (msg) -> console.log "channel: #{@name} - #{msg}".yellow
+  log: (msg) ->
+    console.log "#{new Date()}"[16..23].cyan, "channel: #{@name} - #{msg}".yellow
 
   answer_valid: (ans, cb) ->
     @get_letters (letters) ->
@@ -26,11 +27,18 @@ class Channel extends EventEmitter
 
   make_available: -> $redis.sadd 'game:available-channels', @name
 
+  remove_previous_answer: (uid, round, cb) ->
+    self = this
+    console.log "remove previous"
+    #$redis.hget ""
+    #cb()
+
   # TODO same user submits two answers, replace old one
   submit_answer: (uid, answer, cb) ->
     self = this
     @get_round (round) ->
       return self.emit 'error', 'not ready for answer' if round is 0
+      self.remove_previous_answer uid, round
       self.answer_valid answer, (valid) ->
         if valid
           $redis.hsetnx "answer_user:#{self.name}-#{round}", answer, uid, (err, success) ->

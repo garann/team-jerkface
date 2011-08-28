@@ -14,7 +14,7 @@
 
 	<div id="players">
 		{{each players}}
-		<a href="http://twitter.com/{{= $value.username}}" target="_blank" class="player">{{= $value.username}}</a>
+		<a href="http://twitter.com/{{= $value.username}}" target="_blank" class="player {{= ($value.username==userInfo.username ? "me" : "")}}">{{= $value.username}}</a>
 		{{/each}}
 	</div>
 

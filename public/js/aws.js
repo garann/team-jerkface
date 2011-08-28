@@ -63,7 +63,7 @@ var aws = (function($){
 		};
 
 		$.subscribe("rosterUpdated",function() {
-			$roster.html($.tmpl("rosterTmpl",{players: that.roomInfo.users}));
+			$roster.html($.tmpl("rosterTmpl",{players: that.roomInfo.users, me: that.userInfo.username}));
 		});
 
 		$.subscribe("roundStarted",function() {

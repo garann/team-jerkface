@@ -15,6 +15,12 @@ letters_for_answer = (answer) ->
   final += word[0] || '' for word in split_words answer
   final
 
+sort_totals = (tot) ->
+  arr = []
+  arr.push { user: user, score:score } for user, score of tot
+  arr.sort (i) -> -i.score
+  arr
+
 class Channel extends EventEmitter
   log: (msg) ->
     console.log "#{new Date()}"[16..23].cyan, "channel: #{@name} - #{msg}".yellow
@@ -45,7 +51,7 @@ class Channel extends EventEmitter
           if round is config.rules.max_rounds
             self.log "Totals:"
             console.dir totals
-            cb totals
+            cb sort_totals totals
 
   submit_answer: (uid, answer, cb) ->
     self = this

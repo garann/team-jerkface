@@ -178,7 +178,6 @@ game.on('new channel', function(chan) {
         io.sockets.clients(chan.name).forEach(function(socket) {
             socket.leave(chan.name);
         });
-
     });
     
     chan.on('error', function(error) {
@@ -225,7 +224,7 @@ io.sockets.on('connection', function (socket) {
           });
 
           socket.on('msg', function(msg) {
-              socket.broadcast.to(chan.name).emit('msg', {uid: session.uid, msg: msg});
+              io.sockets.in(chan.name).emit('msg', {uid: session.uid, msg: msg});
               console.log((session.uid + ' says: ' + msg).red);
           });
           

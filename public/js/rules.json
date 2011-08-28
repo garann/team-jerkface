@@ -1,13 +1,13 @@
 {
-    "rounds": 10
+    "rounds": 2
   , "max_players": 10
   , "min_players": 3
-  , "max_rounds": 10
+  , "max_rounds": 2
   , "min_acr_size": 4
   , "max_acr_size": 7
   , "response_length": 300
-  , "response_time": 20000
-  , "roundBuffer_time" : 10000
-  , "vote_time": 10000
-  , "roundEnd_time": 10000
+  , "response_time": 10000
+  , "roundBuffer_time" : 5000
+  , "vote_time": 5000
+  , "roundEnd_time": 5000
 }

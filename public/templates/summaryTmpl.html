@@ -1,6 +1,6 @@
 {{each responses}}
 <span class="response">
-	<b>{{= $value.user}}</b>
+	<a href="http://twitter.com/{{= $value.user}}" target="_blank" class="player {{= ($value.user==me ? "me" : "")}}">{{= $value.user}}</a>
 	{{= $value.answer}} 
 	<i>{{= $value.score}}</i>
 </span>

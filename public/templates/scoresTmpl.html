@@ -1,6 +1,6 @@
 {{each scores}}
 <span class="score">
-	<b>{{= $value.user}}</b>
+	<a href="http://twitter.com/{{= $value.user}}" target="_blank" class="player {{= ($value.user==me ? "me" : "")}}">{{= $value.user}}</a>
 	<i>{{= $value.score}}</i>
 </span>
 {{/each}}

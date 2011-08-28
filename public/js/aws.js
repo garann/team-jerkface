@@ -87,11 +87,11 @@ var aws = (function($){
 		});
 
 		$.subscribe("roundSummary", function() {
-			$vote.html($.tmpl("summaryTmpl",{responses: that.currentRound.responses}));
+			$vote.html($.tmpl("summaryTmpl",{responses: that.currentRound.responses, me: that.userInfo.username}));
 		});
 
 		$.subscribe("gameEnded", function() {
-			$vote.html($.tmpl("scoresTmpl",{scores: that.roomInfo.scores}));
+			$vote.html($.tmpl("scoresTmpl",{scores: that.roomInfo.scores, me: that.userInfo.username}));
 			$body.addClass("voting");
 		});
 

@@ -109,7 +109,7 @@ game.on('new channel', function(chan) {
                     });
                     
                     io.sockets.clients(chan.name).forEach(function(socket) {
-                        socket.remove(chan.name);
+                        socket.leave(chan.name);
                     });
                     
                 } else {
@@ -136,7 +136,7 @@ game.on('new channel', function(chan) {
                                 });
                                 
                                 io.sockets.clients(chan.name).forEach(function(socket) {
-                                    socket.remove(chan.name);
+                                    socket.leave(chan.name);
                                 });
                                 
                             } else {
@@ -153,7 +153,7 @@ game.on('new channel', function(chan) {
                                         });
                                 
                                         io.sockets.clients(chan.name).forEach(function(socket) {
-                                            socket.remove(chan.name);
+                                            socket.leave(chan.name);
                                         });
 
                                     } else {
@@ -183,7 +183,7 @@ game.on('new channel', function(chan) {
         });
         
         io.sockets.clients(chan.name).forEach(function(socket) {
-            socket.remove(chan.name);
+            socket.leave(chan.name);
         });
 
     });

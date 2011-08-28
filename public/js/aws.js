@@ -35,6 +35,13 @@ var aws = (function($){
 			loadTmpl("/templates/summaryTmpl.html","summaryTmpl");
 			loadTmpl("/templates/scoresTmpl.html","scoresTmpl");
 
+			$("body.playing #txtResponse").live("keypress", function(e) {
+				if (e.keyCode == 13) {
+					e.preventDefault();
+					that.events.submitResponse($("#txtResponse").val());
+				}
+			});
+
 			$("body.playing #btnRespond").live("click", function(e) {
 				e.preventDefault();
 				that.events.submitResponse($("#txtResponse").val());

@@ -2,7 +2,7 @@
 @media screen and (min-width: 600px) {
 	
 #players { float: left; width: 15%; max-width: 200px; }
-#play { float: left; width: 60%; }
+#play, #vote { float: left; width: 60%; }
 
 }
 
@@ -41,7 +41,7 @@ header h3 { color: #cff; text-shadow: -2px 2px 3px #000; }
 #vote { padding: 20px;}
 #vote h1 { text-align: center; }
 #vote .response { display: block; background-color: rgba(200,200,200,0.6); padding: 5px; margin-bottom: 10px; overflow: hidden; }
-#vote .response a { float: left; } 
+#vote .response a { float: left; margin-right: 10px; } 
 #vote .response i { font-style: normal; float: right; }
 .btnVote { float: right; background-color: #f60;}
 

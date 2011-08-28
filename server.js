@@ -7,6 +7,7 @@ var http = require('http')
   , connect = require('connect')
   , everyauth = require('everyauth')
   , express = require('express')
+  , gzippo = require('gzippo')
   , RedisStore = require('connect-redis')(express)
   , io = require('socket.io')
   , config = require('./lib/config')
@@ -28,7 +29,7 @@ everyauth
 
 var app = express.createServer(
     express.bodyParser()
-  , express.static(__dirname + "/public")
+  , gzippo.staticGzip(__dirname + "/public")
   , express.cookieParser()
   , express.session({ secret: 'really secret, bro', store: session_store })
   , everyauth.middleware()

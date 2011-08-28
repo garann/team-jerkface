@@ -8,6 +8,6 @@
   , "response_length": 300
   , "response_time": 60000
   , "roundBuffer_time" : 10000
-  , "vote_time": 30000
+  , "vote_time": 20000
   , "roundEnd_time": 6000
 }

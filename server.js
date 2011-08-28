@@ -125,34 +125,45 @@ io.sockets.on('connection', function (socket) {
               console.log(('round started: '+chan.name).red);
               setTimeout(function() {
                   chan.get_answers(function(answers) {
-                      //get responses[] = {username,  response, votes}
-                      // if responses.length ( kill room )
-                      var answersLong = [];
-                      answers.map(function(a) {
-                          answersLong.push({ response: a, responseId: a });
-                      });
-                      io.sockets.in(chan.name).emit('roundEnded', {});
-                      io.sockets.in(chan.name).emit('votingStarted', {responses: answersLong});
-                      console.log(('voting started: '+chan.name).red);
-
-                      setTimeout(function() {
-                          //return round stats
-                          io.sockets.in(chan.name).emit('votingEnded', {});
-                          console.log(('voting ended: '+chan.name).red);
+                      if (answers.length == 0) {
+                          console.log(('no answers: '+chan.name).red);
+                          io.sockets.in(chan.name).emit('gameEnded', {});
+                          console.log(('game halted').red);
+                      } else {
+                          var answersLong = [];
+                          answers.map(function(a) {
+                              answersLong.push({ response: a, responseID: a });
+                          });
+                          io.sockets.in(chan.name).emit('roundEnded', {});
+                          io.sockets.in(chan.name).emit('votingStarted', {responses: answersLong});
+                          console.log(('voting started: '+chan.name).red);
                           
                           setTimeout(function() {
-                              if (haltGame) {
-                                  io.sockets.in(chan.name).emit('gameEnded', {});
-                                  console.log(('game halted').red);
-                              } else {
-                                  chan.next_round(function() {});
-                                  console.log('next round: '+chan.name.red);                              
-                              }
-                          }, config.rules.roundEnd_time);
-                      }, config.rules.vote_time);
-                      
+
+                              chan.get_results(function(results) {
+                                  if (results.length == 0) { // no votes
+                                      console.log(('voting ended [no votes]: '+chan.name).red);
+                                      io.sockets.in(chan.name).emit('gameEnded', {});
+                                      console.log(('game halted').red);
+                                  } else {
+                                      io.sockets.in(chan.name).emit('votingEnded', { responses: results });
+                                      console.log(('voting ended: '+chan.name).red);
+                                      setTimeout(function() {
+                                          if (haltGame) {
+                                              io.sockets.in(chan.name).emit('gameEnded', {});
+                                              console.log(('game halted').red);
+                                          } else {
+                                              chan.next_round(function() {});
+                                              console.log('next round: '+chan.name.red);                              
+                                          }
+                                      }, config.rules.roundEnd_time);
+                                  }
+                              });
+
+
+                          }, config.rules.vote_time);
+                      }
                   });
-                  
               }, config.rules.response_time);
           });
           
@@ -180,8 +191,8 @@ io.sockets.on('connection', function (socket) {
           
           socket.on('voteSubmitted', function(data) {
               // collect votes
-              chan.vote_for(session.uid, data.responseId);
-              console.log((session.uid + ' voted for ' + data.responseId).red);
+              chan.vote_for(session.uid, data.responseID);
+              console.log((session.uid + ' voted for ' + data.responseID).red);
           });
 
           socket.on('msg', function(msg) {

@@ -39,6 +39,11 @@ class Channel extends EventEmitter
         else
           cb false
 
+  get_state: (cb) ->
+    # TODO
+
+  # TODO 
+
   user_voted_for: (uid, cb) ->
     self = this
     @get_round (round) ->

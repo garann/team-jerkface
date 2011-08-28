@@ -87,7 +87,7 @@ io.sockets.on('connection', function (socket) {
                       if (err)
                           throw new Error(err);
                   });
-              }
+              } // TODO socket.emit 'game #{current state}', {required data}
               
               if (config.env == 'development') {
                   if (users.length < 2) {
@@ -111,6 +111,7 @@ io.sockets.on('connection', function (socket) {
 
           chan.on('new round', function(acro) {
               io.sockets.in(chan.name).emit('roundStarted', {letters: acro});
+              // TODO: implement game start / end / next round in Channel
               setTimeout(function() {
                   //get responses[] = {username,  response, votes}
                   // if responses.length ( kill room )

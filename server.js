@@ -83,13 +83,15 @@ io.sockets.on('connection', function (socket) {
           console.log('joining: '+chan.name.red);
           socket.join(chan.name);
 
+          var haltGame = false;
+
           chan.get_users(function(users) {
               if (users.indexOf(session.uid) === -1) { //  if user isn't in channel add them
                   chan.add_user(session.uid, function(err) {
                       if (err)
                           throw new Error(err);
                   });
-              } // TODO socket.emit 'game #{current state}', {required data}
+              } 
               
               if (config.env == 'development') {
                   if (users.length < 2) {
@@ -113,6 +115,10 @@ io.sockets.on('connection', function (socket) {
               console.log(('game started: '+chan.name).red);
           });
 
+          chan.on('waiting for users', function() {
+              haltGame = true;
+          });
+
           chan.on('new round', function(acro) {
               io.sockets.in(chan.name).emit('roundStarted', {letters: acro});
               // TODO: implement game start / end / next round in Channel
@@ -134,8 +140,13 @@ io.sockets.on('connection', function (socket) {
                       console.log(('voting ended: '+chan.name).red);
 
                       setTimeout(function() {
-                          chan.next_round(function() {});
-                          console.log('next round: '+chan.name.red);
+                          if (haltGame) {
+                              io.sockets.in(chan.name).emit('gameEnded', {});
+                              console.log(('game halted').red);
+                          } else {
+                              chan.next_round(function() {});
+                              console.log('next round: '+chan.name.red);                              
+                          }
                       }, config.rules.roundEnd_time);
                   }, config.rules.vote_time);
 

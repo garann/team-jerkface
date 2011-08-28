@@ -62,6 +62,10 @@ class Channel extends EventEmitter
           self.remove_available()
         cb() if cb
 
+  remove_user: (uid, cb) ->
+    $redis.lrem @list, 1, uid, (err, user_removed) ->
+      cb user_removed if cb
+
   has_user: (user, cb) ->
     @get_users (users) ->
       cb user in users

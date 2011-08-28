@@ -56,11 +56,11 @@ var aws = (function($){
 
 		this.timer = function(t) {
 			var timerT = setInterval(function() {
-					t--;
-					if (t > 9)
-						$time.text("0:" + t.getSeconds());
+					t -= 1000;
+					if (t > 9000)
+						$time.text("0:" + new Date(t).getSeconds());
 					else if (t > -1)
-						$time.text("0:0" + t.getSeconds());
+						$time.text("0:0" + new Date(t).getSeconds());
 					else
 						clearInterval(timerT);
 				}, 1000);
@@ -73,13 +73,13 @@ var aws = (function($){
 		$.subscribe("roundStarted",function() {
 			$game.html($.tmpl("lettersTmpl",{letters: that.currentRound.letters}));
 			$resp.html($.tmpl("responseTmpl",null));
-			rend.timer(that.config.response_time);
+			rend.timer(that.config.response_time-1000);
 			$body.addClass("playing");
 		});
 
 		$.subscribe("votingStarted",function() {
 			$vote.html($.tmpl("voteTmpl",{responses: that.currentRound.responses}));
-			rend.timer(that.config.vote_time);
+			rend.timer(that.config.vote_time-1000);
 			$body.addClass("voting");
 		});
 

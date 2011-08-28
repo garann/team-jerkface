@@ -1,7 +1,7 @@
 html { margin: 0px; padding: 0px; }
 body { background: #333 url(/img/tactile_noise.png); margin: 0px; padding: 0px; color: #eee; font-family: helvetica, sans-serif; }
 header { background-color: rgba(120,120,120,0.5); border-radius: 0px 0px 10px 10px; padding: 5px 20px; box-shadow: 0px 2px 3px #191919; }
-h1, h2, h3 { font-family: 'Slackey', helvetica, sans-serif; color: #ddd; text-shadow: -2px 2px 3px #191919; margin: 0px; }
+h1, h2, h3 { font-family: 'Slackey', Helvetica, sans-serif; color: #ddd; text-shadow: -2px 2px 3px #191919; margin: 0px; }
 a { color: #f06; text-decoration: none; }
 a.me { color: #60f; }
 
@@ -20,10 +20,11 @@ header h3 { color: #cff; text-shadow: -2px 2px 3px #000; }
 #players a { display: block; }
 #play { float: left; width: 60%; margin: 20px 5%; background-color: rgba(50,50,50,0.5); border-radius: 10px; }
 #gameStage { padding: 20px; text-align: center; }
-.letters { font-family: 'Slackey', cursive; color: #090; text-shadow: -2px 4px 5px #191919; font-size: 60px; -moz-animation: popin 1s 0s 1 forwards; -webkit-animation: popin 1s 0s 1 forwards; }
+.letters { font-family: 'Slackey', Helvetica; text-transform: uppercase; color: #090; text-shadow: -2px 4px 5px #191919; font-size: 60px; -moz-animation: popin .5s 0s 1 forwards; -webkit-animation: popin .5s 0s 1 forwards; }
 #responseStage { overflow: hidden;}
 #responseStage textarea { background-color: #eee; width: 80%; margin: 10px 5%; padding: 5%; resize: none; font-family: helvetica, sans-serif; font-size: 20px; color: #333; border: none; border-radius: 10px; box-shadow: 0px 2px 3px #191919; }
-#btnRespond { float: right; margin-right: 5%; background-color: #60f; color: #fff; border: none; border-radius: 10px; box-shadow: 0px 2px 3px #191919; }
+#btnRespond { float: right; margin: 10px 5% 20px; background-color: #60f; color: #222; text-shadow: 0px 1px 0px rgba(200,200,200,0.5); border: none; border-radius: 10px; box-shadow: 0px 2px 3px #191919; padding: 5px 20px; }
+#btnRespond:hover { color: #000; }
 
 @-webkit-keyframes popin {
     from { font-size: 1px; }

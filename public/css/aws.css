@@ -38,7 +38,9 @@ header h3 { color: #cff; text-shadow: -2px 2px 3px #000; }
 #btnRespond:hover { color: #000; }
 
 #vote { padding: 20px;}
-#vote .response { background-color: rgba(200,200,200,0.6); padding: 5px; margin-bottom: 10px; overflow: hidden; }
+#vote .response { display: block; background-color: rgba(200,200,200,0.6); padding: 5px; margin-bottom: 10px; overflow: hidden; }
+#vote .response a { float: left; } 
+#vote .response i { font-style: normal; float: right; }
 .btnVote { float: right; background-color: #f60;}
 
 @-webkit-keyframes popin {

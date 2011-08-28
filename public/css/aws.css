@@ -12,6 +12,7 @@ header h3 { color: #cff; text-shadow: -2px 2px 3px #000; }
 .voting #play { display: none;}
 
 #players { float: left; width: 15%; margin: 20px 2%; background-color: rgba(50,50,50,0.5); border-radius: 10px; text-align: center; padding: 10px 0px; }
+#players a { display: block; }
 #play { float: left; width: 60%; margin: 20px 5%; background-color: rgba(50,50,50,0.5); border-radius: 10px; }
 #gameStage { padding: 20px; text-align: center; }
 .letters { font-family: 'Slackey', cursive; color: #090; text-shadow: -2px 4px 5px #191919; font-size: 60px; }

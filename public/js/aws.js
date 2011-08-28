@@ -46,14 +46,6 @@ var aws = (function($){
 			});
 		};
 
-		this.responseTimer = function(startTime) {
-			timer(startTime, that.config.response_time);
-		};
-
-		this.voteTimer = function(startTime) {
-			timer(startTime, that.config.vote_time);
-		};
-
 		this.clear = function() {
 			$game.html("");
 			$resp.html("");
@@ -62,6 +54,18 @@ var aws = (function($){
 				.removeClass("voting");
 		};
 
+		this.timer = function(t) {
+			var timerT = setInterval(function() {
+					t--;
+					if (t > 9)
+						$time.text("0:" + t.getSeconds());
+					else if (t > -1)
+						$time.text("0:0" + t.getSeconds());
+					else
+						clearInterval(timerT);
+				}, 1000);
+		}
+
 		$.subscribe("rosterUpdated",function() {
 			$roster.html($.tmpl("rosterTmpl",{players: that.roomInfo.users, me: that.userInfo.username}));
 		});
@@ -69,13 +73,13 @@ var aws = (function($){
 		$.subscribe("roundStarted",function() {
 			$game.html($.tmpl("lettersTmpl",{letters: that.currentRound.letters}));
 			$resp.html($.tmpl("responseTmpl",null));
-			rend.responseTimer(new Date());
+			rend.timer(that.config.response_time);
 			$body.addClass("playing");
 		});
 
 		$.subscribe("votingStarted",function() {
 			$vote.html($.tmpl("voteTmpl",{responses: that.currentRound.responses}));
-			rend.voteTimer(new Date());
+			rend.timer(that.config.vote_time);
 			$body.addClass("voting");
 		});
 
@@ -92,18 +96,6 @@ var aws = (function($){
 			$.get(path,function(r) {
 				$.template(name, r);
 			}, "html");
-		}
-
-		function timer(startTime, timeLength) {
-			var endTime = startTime.getTime() + timeLength,
-				timerT = setInterval(function() {
-					var n = (new Date()).getTime(),
-						t = new Date(endTime - n);
-					if (t > 0)
-						$time.text("0:" + t.getSeconds());
-					else
-						clearInterval(timerT);
-				}, 1000);
 		}
 
 		return this;

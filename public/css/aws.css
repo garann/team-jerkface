@@ -7,6 +7,7 @@ a.me { color: #60f; }
 
 
 header h3 { color: #cff; text-shadow: -2px 2px 3px #000; }
+#timer { background-color: #333; padding: 5px; min-width: 50px; float: right; border-radius: 10px; box-shadow: 0px 1px 2px #777; text-align: right; }
 .playing #play,
 .voting #vote { display: block; }
 .playing #vote,

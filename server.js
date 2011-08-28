@@ -171,15 +171,9 @@ game.on('new channel', function(chan) {
     });
     
     
-    chan.on('round reset', function() {
-        //get scores[] = {username, score}
+    chan.on('round reset', function(scores) {
         console.log(('round reset: '+chan.name).red);
-        io.sockets.in(chan.name).emit('gameEnded', {});
-
-        chan.get_users(function(users) {
-            for (user in users)
-                chan.remove_user(user);
-        });
+        io.sockets.in(chan.name).emit('gameEnded', { scores: scores });
         
         io.sockets.clients(chan.name).forEach(function(socket) {
             socket.leave(chan.name);

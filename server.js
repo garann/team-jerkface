@@ -186,10 +186,10 @@ io.sockets.on('connection', function (socket) {
           socket.on('responseSubmitted', function(data) {
               console.log(('got response from ' + session.uid + ' in channel : ' + chan.name + ' answer: ' + data.response).red);
               // collect responses
-              chan.submit_answer(session.uid, data.response, function(success) {
-                  if (!success) {
-                      socket.emit('responseError', { errorMessage: success });
-                      console.log(('responseError : ' + success).red);
+              chan.submit_answer(session.uid, data.response, function(res) {
+                  if (res !== 'ok') {
+                      socket.emit('responseError', { errorMessage: res });
+                      console.log(('responseError : ' + res).red);
                   }
               });
           });

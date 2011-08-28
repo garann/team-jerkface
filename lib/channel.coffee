@@ -91,6 +91,7 @@ class Channel extends EventEmitter
         if old_ans
           $redis.zincrby "scores:#{self.name}-#{round}", -1, old_ans
           self.log "#{uid} removing previous vote for #{old_ans}"
+        $redis.hset "voted_for:#{self.name}-#{round}", uid, answer
         $redis.zincrby "scores:#{self.name}-#{round}", 1, answer
 
   new_letters: ->

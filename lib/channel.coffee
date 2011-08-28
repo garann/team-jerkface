@@ -15,7 +15,6 @@ letters_for_answer = (answer) ->
   final += word[0] || '' for word in split_words answer
   final
 
-
 class Channel extends EventEmitter
   log: (msg) ->
     console.log "#{new Date()}"[16..23].cyan, "channel: #{@name} - #{msg}".yellow
@@ -34,6 +33,19 @@ class Channel extends EventEmitter
       $redis.zrem "scores:#{self.name}-#{round}", ans if ans
     $redis.hdel "user_answer:#{@name}-#{round}", uid, (err, resp) ->
       self.log "#{uid}'s previous answer removed'" if resp
+
+  total_scores: (cb) ->
+    totals = {}
+    self = this
+    for round in [1 .. config.rules.max_rounds]
+      do (round) ->
+        $redis.hgetall "channel:round-result:#{self.name}-#{round}", (err, results) ->
+          for user, score of results
+            totals[user] = (parseInt(totals[user] || 0)) + parseInt(score || 0)
+          if round is config.rules.max_rounds
+            self.log "Totals:"
+            console.dir totals
+            cb totals
 
   submit_answer: (uid, answer, cb) ->
     self = this
@@ -75,7 +87,15 @@ class Channel extends EventEmitter
             result['user'] = users[result.answer]
           self.log "get_results(): "
           console.dir results
+          self.set_round_scores round, results
           cb results
+
+  set_round_scores: (round, round_results) ->
+    self = this
+    for result in round_results
+      self.log "set_round_scores(#{round}): "
+      console.dir round_results
+      $redis.hset "channel:round-result:#{self.name}-#{round}", result.user, result.score
 
   user_voted_for: (uid, cb) ->
     self = this
@@ -117,8 +137,10 @@ class Channel extends EventEmitter
     $redis.hincrby "channel:round", @name, 1, (err, round) ->
       if round > config.rules.max_rounds
         $redis.hset "channel:round", self.name, 0
-        self.log "reset to round 0"
-        self.emit 'round reset'
+        self.total_scores (results) ->
+          self.emit 'round reset', results
+          self.log "reset to round 0 -- total scores:"
+          console.dir results
         self.end()
       else
         letters = self.new_letters()
@@ -152,6 +174,7 @@ class Channel extends EventEmitter
     $redis.del "user_answer:#{@name}-#{round}"
     $redis.del "answer_user:#{@name}-#{round}"
     $redis.del "voted_for:#{@name}-#{round}"
+    $redis.del "channel:round-result:#{@name}-#{round}"
 
   remove_user: (uid, cb) ->
     self = this

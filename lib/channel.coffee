@@ -140,7 +140,7 @@ class Channel extends EventEmitter
     $redis.del "scores:#{@name}-#{round}"
     $redis.del "user_answer:#{@name}-#{round}"
     $redis.del "answer_user:#{@name}-#{round}"
-    $redis.del "voted_for:#{self.name}-#{round}"
+    $redis.del "voted_for:#{@name}-#{round}"
 
   remove_user: (uid, cb) ->
     self = this

@@ -73,6 +73,7 @@ app.get('/index', function(req, res) {
 });
 
 game.on('new channel', function(chan) {
+    console.log(('new channel: '+chan.name).red);
     
     chan.on('new user', function(uid) {
         chan.get_users(function(users) {
@@ -106,7 +107,9 @@ game.on('new channel', function(chan) {
                             chan.remove_user(user);
                     });
                     
-                    io.sockets.in(chan.name).disconnect();
+                    io.sockets.clients(chan.name).forEach(function(socket) {
+                        socket.remove(chan.name);
+                    });
                     
                 } else {
                     var answersLong = [];
@@ -131,7 +134,9 @@ game.on('new channel', function(chan) {
                                         chan.remove_user(user);
                                 });
                                 
-                                io.sockets.in(chan.name).disconnect();
+                                io.sockets.clients(chan.name).forEach(function(socket) {
+                                    socket.remove(chan.name);
+                                });
                                 
                             } else {
                                 io.sockets.in(chan.name).emit('votingEnded', { responses: results });
@@ -160,6 +165,16 @@ game.on('new channel', function(chan) {
         //get scores[] = {username, score}
         console.log(('round reset: '+chan.name).red);
         io.sockets.in(chan.name).emit('gameEnded', {});
+
+        chan.get_users(function(users) {
+            for (user in users)
+                chan.remove_user(user);
+        });
+        
+        io.sockets.clients(chan.name).forEach(function(socket) {
+            socket.remove(chan.name);
+        });
+
     });
     
     chan.on('error', function(error) {

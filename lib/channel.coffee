@@ -7,9 +7,8 @@ util = require 'util'
 acro = new AcroLetters()
 
 # TODO: implement waiting time between 3 users and game start
-
 split_words = (ans) -> 
-  ans.replace(/[^A-Za-z0-9 ]/g, ' ').replace(/['-]/g,'').toLowerCase().split(' ')
+  ans.replace(/['-]/g,'').replace(/[^A-Za-z0-9 ]/g, ' ').toLowerCase().split(' ')
 
 letters_for_answer = (answer) ->
   final = ""

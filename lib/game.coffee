@@ -4,6 +4,9 @@ Channel = require './channel'
 channels = {}
 
 module.exports =
+  shuffle: (array) ->
+    array.sort (item) -> 0.5 - Math.random()
+
   clear_available_channels: ->
     $redis.del 'game:available-channels'
 

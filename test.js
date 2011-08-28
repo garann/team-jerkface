@@ -1,8 +1,6 @@
 require('coffee-script'); // dont hate
 
-var game = require('./lib/game')
-  , Channel = require('./lib/channel')
-  , numbros = 0;
+var game = require('./lib/game');
 
 game.available_channel(function (chan) {
   chan.add_user('bro')

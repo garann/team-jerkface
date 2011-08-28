@@ -38,12 +38,13 @@ class Channel extends EventEmitter
               $redis.hset "user_answer:#{self.name}-#{round}", uid, answer
               $redis.zadd "scores:#{self.name}-#{round}", 0, answer
               self.log "user: #{uid} submitted answer #{answer}"
+              cb 'ok' if cb
             else
               self.log "answer already exists or something".red
-            cb success if cb
+              self.submit_answer uid, answer + '..', cb
         else
           self.log "invalid answer".blue
-          cb false
+          cb 'answer not valid'
   
   get_answers: (cb) ->
     self = this
@@ -70,7 +71,7 @@ class Channel extends EventEmitter
   user_voted_for: (uid, cb) ->
     self = this
     @get_round (round) ->
-      $redis.hget "voted_for:#{self.name}", uid, (err, ans) ->
+      $redis.hget "voted_for:#{self.name}-#{round}", uid, (err, ans) ->
         cb ans
 
   vote_for: (uid, answer) ->
@@ -109,9 +110,9 @@ class Channel extends EventEmitter
         self.log "reset to round 0"
         self.emit 'round reset'
       else
-        # TODO - clear old round keys
         letters = self.new_letters()
         self.log "entered round #{round} with #{letters}"
+        self.remove_old_results()
         self.emit 'new round', letters
 
       cb() if cb
@@ -134,6 +135,12 @@ class Channel extends EventEmitter
         else
           self.remove_available()
         cb() if cb
+
+  remove_old_results: (round) ->
+    $redis.del "scores:#{@name}-#{round}"
+    $redis.del "user_answer:#{@name}-#{round}"
+    $redis.del "answer_user:#{@name}-#{round}"
+    $redis.del "voted_for:#{self.name}-#{round}"
 
   remove_user: (uid, cb) ->
     self = this

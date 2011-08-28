@@ -9,7 +9,7 @@ acro = new AcroLetters()
 
 # TODO: fix mid-word punctuation such as ' and -
 split_words = (ans) -> 
-  ans.replace(/[^A-Za-z0-9 ]/g, ' ').toLowerCase().split(' ')
+  ans.replace(/[^A-Za-z0-9 ]/g, ' ').replace(/['-]/g,'').toLowerCase().split(' ')
 
 letters_for_answer = (answer) ->
   final = ""
@@ -59,7 +59,6 @@ class Channel extends EventEmitter
         self.log 'users from answers', users.join('-=-')
       console.log "args: #{answers.join(',')}"
       $redis.hmget "answer_user:#{self.name}-#{round}", (err, res) ->
-
       #self.log "scores: #{scores.join(', ')}"
 
   user_voted_for: (uid, cb) ->

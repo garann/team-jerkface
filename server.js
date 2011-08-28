@@ -72,6 +72,102 @@ app.get('/index', function(req, res) {
     });
 });
 
+game.on('new channel', function(chan) {
+    
+    chan.on('new user', function(uid) {
+        chan.get_users(function(users) {
+            var usersLong = tmpUserListFunc(users);
+            io.sockets.in(chan.name).emit('rosterUpdated', { users: usersLong });
+            console.log((uid + ' joined '+chan.name).red);
+        });
+    });
+    
+    chan.on('game started', function() {
+        io.sockets.in(chan.name).emit('gameStarted', {});
+        console.log(('game started: '+chan.name).red);
+    });
+
+    chan.on('waiting for users', function() {
+        haltGame = true;
+    });
+    
+    chan.on('new round', function(acro) {
+        io.sockets.in(chan.name).emit('roundStarted', {letters: acro});
+        // TODO: implement game start / end / next round in Channel
+        console.log(('round started: '+chan.name).red);
+        setTimeout(function() {
+            chan.get_answers(function(answers) {
+                if (answers.length == 0) {
+                    console.log(('no answers: '+chan.name).red);
+                    io.sockets.in(chan.name).emit('gameEnded', {});
+                    console.log(('game halted').red);
+                    chan.get_users(function(users) {
+                        for (user in users)
+                            chan.remove_user(user);
+                    });
+                    
+                    io.sockets.in(chan.name).disconnect();
+                    
+                } else {
+                    var answersLong = [];
+                    answers.map(function(a) {
+                        answersLong.push({ response: a, responseID: a });
+                    });
+                    answersLong = game.shuffle(answersLong);
+                    io.sockets.in(chan.name).emit('roundEnded', {});
+                    io.sockets.in(chan.name).emit('votingStarted', {responses: answersLong});
+                    console.log(('voting started: '+chan.name).red);
+                    
+                    setTimeout(function() {
+                        
+                        chan.get_results(function(results) {
+                            if (results.length == 0) { // no votes
+                                console.log(('voting ended [no votes]: '+chan.name).red);
+                                io.sockets.in(chan.name).emit('gameEnded', {});
+                                console.log(('game halted').red);
+                                
+                                chan.get_users(function(users) {
+                                    for (user in users)
+                                        chan.remove_user(user);
+                                });
+                                
+                                io.sockets.in(chan.name).disconnect();
+                                
+                            } else {
+                                io.sockets.in(chan.name).emit('votingEnded', { responses: results });
+                                console.log(('voting ended: '+chan.name).red);
+                                setTimeout(function() {
+                                    if (haltGame) {
+                                        io.sockets.in(chan.name).emit('gameEnded', {});
+                                        console.log(('game halted').red);
+                                    } else {
+                                        chan.next_round(function() {});
+                                        console.log('next round: '+chan.name.red);                              
+                                    }
+                                }, config.rules.roundEnd_time);
+                            }
+                        });
+                        
+                        
+                    }, config.rules.vote_time);
+                }
+            });
+        }, config.rules.response_time);
+    });
+    
+    
+    chan.on('round reset', function() {
+        //get scores[] = {username, score}
+        console.log(('round reset: '+chan.name).red);
+        io.sockets.in(chan.name).emit('gameEnded', {});
+    });
+    
+    chan.on('error', function(error) {
+        console.log(('error: '+error).red);
+    });
+    
+});
+
 io.sockets.on('connection', function (socket) {
   var cookie = connect.utils.parseCookie(socket.handshake.headers.cookie)
     , sid = cookie['connect.sid'];
@@ -99,88 +195,6 @@ io.sockets.on('connection', function (socket) {
                       chan.add_user('bro2', function(){});
                   }
               }
-          });
-
-
-          chan.on('new user', function(uid) {
-              chan.get_users(function(users) {
-                  var usersLong = tmpUserListFunc(users);
-                  io.sockets.in(chan.name).emit('rosterUpdated', { users: usersLong });
-                  console.log((uid + ' joined '+chan.name).red);
-              });
-          });
-          
-          chan.on('game started', function() {
-              io.sockets.in(chan.name).emit('gameStarted', {});
-              console.log(('game started: '+chan.name).red);
-          });
-
-          chan.on('waiting for users', function() {
-              haltGame = true;
-          });
-
-          chan.on('new round', function(acro) {
-              io.sockets.in(chan.name).emit('roundStarted', {letters: acro});
-              // TODO: implement game start / end / next round in Channel
-              console.log(('round started: '+chan.name).red);
-              setTimeout(function() {
-                  chan.get_answers(function(answers) {
-                      if (answers.length == 0) {
-                          console.log(('no answers: '+chan.name).red);
-                          io.sockets.in(chan.name).emit('gameEnded', {});
-                          console.log(('game halted').red);
-                          chan.remove_user(session.uid);
-                          socket.leave(chan.name);
-                      } else {
-                          var answersLong = [];
-                          answers.map(function(a) {
-                              answersLong.push({ response: a, responseID: a });
-                          });
-                          answersLong = game.shuffle(answersLong);
-                          io.sockets.in(chan.name).emit('roundEnded', {});
-                          io.sockets.in(chan.name).emit('votingStarted', {responses: answersLong});
-                          console.log(('voting started: '+chan.name).red);
-                          
-                          setTimeout(function() {
-
-                              chan.get_results(function(results) {
-                                  if (results.length == 0) { // no votes
-                                      console.log(('voting ended [no votes]: '+chan.name).red);
-                                      io.sockets.in(chan.name).emit('gameEnded', {});
-                                      console.log(('game halted').red);
-                                      chan.remove_user(session.uid);
-                                      socket.leave(chan.name);
-                                  } else {
-                                      io.sockets.in(chan.name).emit('votingEnded', { responses: results });
-                                      console.log(('voting ended: '+chan.name).red);
-                                      setTimeout(function() {
-                                          if (haltGame) {
-                                              io.sockets.in(chan.name).emit('gameEnded', {});
-                                              console.log(('game halted').red);
-                                          } else {
-                                              chan.next_round(function() {});
-                                              console.log('next round: '+chan.name.red);                              
-                                          }
-                                      }, config.rules.roundEnd_time);
-                                  }
-                              });
-
-
-                          }, config.rules.vote_time);
-                      }
-                  });
-              }, config.rules.response_time);
-          });
-          
-
-          chan.on('round reset', function() {
-              //get scores[] = {username, score}
-              console.log(('round reset: '+chan.name).red);
-              io.sockets.in(chan.name).emit('gameEnded', {});
-          });
-
-          chan.on('error', function(error) {
-              console.log(('error: '+error).red);
           });
 
           socket.on('responseSubmitted', function(data) {

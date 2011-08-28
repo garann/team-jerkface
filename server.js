@@ -118,21 +118,26 @@ io.sockets.on('connection', function (socket) {
               console.log(error);
           });
 
+          socket.on('responseSubmitted', function(data) {
+              // collect responses
+          });
+          
+          socket.on('voteSubmitted', function(data) {
+              // collect votes
+          });
+
+          socket.on('msg', function(msg) {
+              socket.broadcast.to(chan.name).emit('msg', {uid: session.uid, msg: msg});
+          });
+          
+          socket.on('disconnect', function() {
+              chan.remove_user(session.uid);
+              socket.leave(chan.name);
+          });
+
       });
 
-      socket.on('responseSubmitted', function(data) {
-          // collect responses
-      });
-
-      socket.on('voteSubmitted', function(data) {
-          // collect votes
-      });
-
-      socket.on('msg', function(msg) {
-          socket.broadcast.to(chan.name).emit('msg', {uid: session.uid, msg: msg});
-      });
   });
-
 });
 
 app.listen(config.port); 

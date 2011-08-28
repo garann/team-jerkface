@@ -14,7 +14,7 @@
 
 	<div id="players">
 		{{each players}}
-		<a href="http://twitter.com/{{= $value.username}}" class="player">{{= $value.username}}</a>
+		<a href="http://twitter.com/{{= $value.username}}" target="_blank" class="player">{{= $value.username}}</a>
 		{{/each}}
 	</div>
 
@@ -32,7 +32,6 @@
 <script src="/socket.io/socket.io.js"></script>
 <script src="js/pubsub.js"></script>
 <script src="js/aws.js"></script>
-<script src="js/rules.json" type="text/json" id="config"></script>
 <script>
 	aws.userInfo = {
 		username: "{{= userInfo.username}}"

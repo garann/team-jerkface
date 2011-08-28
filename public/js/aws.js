@@ -5,9 +5,9 @@ var aws = (function($){
 		$game = $("#gameStage"),
 		$resp = $("#responseStage"),
 		$vote = $("#vote"),
-		$time = $("#timer"),
-		config = JSON.parse($("#config").html());
+		$time = $("#timer");
 
+	this.config;
 	this.state = 0;
 	this.userInfo = {};
 	this.currentRound = {
@@ -24,6 +24,10 @@ var aws = (function($){
 		var rend = this;
 		
 		this.init = function() {
+			$.get("js/rules.json", function(r) {
+				config = r;
+			},"json");
+
 			loadTmpl("/templates/rosterTmpl.html","rosterTmpl");
 			loadTmpl("/templates/lettersTmpl.html","lettersTmpl");
 			loadTmpl("/templates/responseTmpl.html","responseTmpl");
@@ -43,11 +47,11 @@ var aws = (function($){
 		};
 
 		this.responseTimer = function(startTime) {
-			timer(startTime, config.response_time);
+			timer(startTime, that.config.response_time);
 		};
 
 		this.voteTimer = function(startTime) {
-			timer(startTime, config.vote_time);
+			timer(startTime, that.config.vote_time);
 		};
 
 		this.clear = function() {

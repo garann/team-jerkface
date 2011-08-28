@@ -103,11 +103,8 @@ game.on('new channel', function(chan) {
                     console.log(('no answers: '+chan.name).red);
                     io.sockets.in(chan.name).emit('gameEnded', {});
                     console.log(('game halted').red);
-                    chan.get_users(function(users) {
-                        for (user in users)
-                            chan.remove_user(user);
-                    });
-                    
+
+                    chan.end();                    
                     io.sockets.clients(chan.name).forEach(function(socket) {
                         socket.leave(chan.name);
                     });
@@ -130,11 +127,7 @@ game.on('new channel', function(chan) {
                                 io.sockets.in(chan.name).emit('gameEnded', {});
                                 console.log(('game halted').red);
                                 
-                                chan.get_users(function(users) {
-                                    for (user in users)
-                                        chan.remove_user(user);
-                                });
-                                
+                                chan.end();
                                 io.sockets.clients(chan.name).forEach(function(socket) {
                                     socket.leave(chan.name);
                                 });
@@ -147,11 +140,7 @@ game.on('new channel', function(chan) {
                                         io.sockets.in(chan.name).emit('gameEnded', {});
                                         console.log(('game halted').red);
                                         
-                                        chan.get_users(function(users) {
-                                            for (user in users)
-                                                chan.remove_user(user);
-                                        });
-                                
+                                        chan.end();
                                         io.sockets.clients(chan.name).forEach(function(socket) {
                                             socket.leave(chan.name);
                                         });

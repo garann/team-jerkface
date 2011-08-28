@@ -69,13 +69,13 @@ var aws = (function($){
 		$.subscribe("roundStarted",function() {
 			$game.html($.tmpl("lettersTmpl",{letters: that.currentRound.letters}));
 			$resp.html($.tmpl("responseTmpl",null));
-			rend.responseTimer(Date.now());
+			rend.responseTimer(new Date());
 			$body.addClass("playing");
 		});
 
 		$.subscribe("votingStarted",function() {
 			$vote.html($.tmpl("voteTmpl",{responses: that.currentRound.responses}));
-			rend.voteTimer(Date.now());
+			rend.voteTimer(new Date());
 			$body.addClass("voting");
 		});
 
@@ -97,7 +97,7 @@ var aws = (function($){
 		function timer(startTime, timeLength) {
 			var endTime = startTime.getTime() + timeLength,
 				timerT = setInterval(function() {
-					var n = Date.now().getTime(),
+					var n = (new Date()).getTime(),
 						t = new Date(endTime - n);
 					if (t > 0)
 						$timer.text("0:" + t.getSeconds());

@@ -15,6 +15,7 @@ class Game extends EventEmitter
     self = this
     if channels[name]
         cb channels[name]
+        self.emit 'new channel', channels[name]
       else
         channels[name] = new Channel name
         channels[name].on 'ready', ->

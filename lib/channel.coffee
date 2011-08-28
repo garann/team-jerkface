@@ -176,11 +176,9 @@ class Channel extends EventEmitter
     self = this
     @list = "chan:users-#{@name}"
     @emit 'error', "name can't be blank" if @name?.length == 0
+    @emit 'ready'
     $redis.llen @list, (err, len) ->
       self.log "initialized with #{len} users"
-      if len > config.rules.max_players
-        self.emit 'error', 'too many users'
-      else
-        self.emit 'ready'
+      self.emit 'ready'
 
 module.exports = Channel

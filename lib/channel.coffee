@@ -49,11 +49,10 @@ class Channel extends EventEmitter
   get_answers: (cb) ->
     self = this
     @get_round (round) ->
-      $redis.zrevrange "scores:#{self.name}-#{round}", 0, -1, "WITHSCORES", (err, scores) ->
-        answers = scores.filter (_, score) -> score % 2 == 0
-        self.log "get_answers: #{answers.join(', ')}"
-        cb answers, round
+      $redis.zrevrange "scores:#{self.name}-#{round}", 0, -1, (err, answers) ->
         self.emit 'error', 'no answers' if answers.length == 0
+        self.log "get_answers(): #{answers.join(', ')}"
+        cb answers
 
   get_results: (cb) ->
     self = this
@@ -63,12 +62,10 @@ class Channel extends EventEmitter
         for i in [0 ... scores.length / 2]
           results.push { answer: scores[i * 2], score: scores[i * 2 + 1]}
         $redis.hgetall "answer_user:#{self.name}-#{round}", (err, users) ->
-          console.dir users
-          console.dir results
           for result in results
-            self.log "user: #{users[result.answer]} answered #{result.answer}"
             result['user'] = users[result.answer]
-          self.log "results: ".blue + util.inspect(results)
+          self.log "get_results(): "
+          console.dir results
           cb results
 
   user_voted_for: (uid, cb) ->

@@ -1,6 +1,7 @@
 $redis = require './adapter'
 config = require './config'
 colors = require 'colors'
+util = require 'util'
 {EventEmitter} = require 'events'
 {AcroLetters} = require './AcroLetters'
 acro = new AcroLetters()
@@ -39,8 +40,11 @@ class Channel extends EventEmitter
               $redis.hset "user_answer:#{self.name}-#{round}", uid, answer
               $redis.zadd "scores:#{self.name}-#{round}", 0, answer
               self.log "user: #{uid} submitted answer #{answer}"
+            else
+              self.log "answer already exists or something".red
             cb success if cb
         else
+          self.log "invalid answer".blue
           cb false
   
   get_answers: (cb) ->
@@ -50,16 +54,23 @@ class Channel extends EventEmitter
         answers = scores.filter (_, score) -> score % 2 == 0
         self.log "get_answers: #{answers.join(', ')}"
         cb answers, round
+        self.emit 'error', 'no answers' if answers.length == 0
 
   get_results: (cb) ->
     self = this
-    @get_answers (answers, round) ->
-      results = []
-      answers.push (err, users...) ->
-        self.log 'users from answers', users.join('-=-')
-      console.log "args: #{answers.join(',')}"
-      $redis.hmget "answer_user:#{self.name}-#{round}", (err, res) ->
-      #self.log "scores: #{scores.join(', ')}"
+    @get_round (round) ->
+      $redis.zrevrange "scores:#{self.name}-#{round}", 0, -1, "WITHSCORES", (err, scores) ->
+        results = []
+        for i in [0 ... scores.length / 2]
+          results.push { answer: scores[i * 2], score: scores[i * 2 + 1]}
+        $redis.hgetall "answer_user:#{self.name}-#{round}", (err, users) ->
+          console.dir users
+          console.dir results
+          for result in results
+            self.log "user: #{users[result.answer]} answered #{result.answer}"
+            result['user'] = users[result.answer]
+          self.log "results: ".blue + util.inspect(results)
+          cb results
 
   user_voted_for: (uid, cb) ->
     self = this

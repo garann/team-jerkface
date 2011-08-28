@@ -184,6 +184,7 @@ class Channel extends EventEmitter
 
   end: ->
     $redis.del @list
+    $redis.hdel "channel:round", @name
     @remove_available()
 
 module.exports = Channel

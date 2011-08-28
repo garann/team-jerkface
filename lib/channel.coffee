@@ -5,7 +5,9 @@ colors = require 'colors'
 {AcroLetters} = require './AcroLetters'
 acro = new AcroLetters()
 
-# TODO: remove if we dont use it for anything
+# TODO: implement waiting time between 3 users and game start
+
+# TODO: fix mid-word punctuation such as ' and -
 split_words = (ans) -> 
   ans.replace(/[^A-Za-z0-9 ]/g, ' ').toLowerCase().split(' ')
 
@@ -25,19 +27,36 @@ class Channel extends EventEmitter
 
   make_available: -> $redis.sadd 'game:available-channels', @name
 
+  # TODO same user submits two answers, replace old one
   submit_answer: (uid, answer, cb) ->
     self = this
     @get_round (round) ->
       return self.emit 'error', 'not ready for answer' if round is 0
       self.answer_valid answer, (valid) ->
         if valid
-          $redis.hsetnx "answer_user:#{self.name}-#{round}", answer, uid, (success) ->
+          $redis.hsetnx "answer_user:#{self.name}-#{round}", answer, uid, (err, success) ->
             if success
               $redis.hset "user_answer:#{self.name}-#{round}", uid, answer
               $redis.zadd "scores:#{self.name}-#{round}", 0, answer
+              self.log "user: #{uid} submitted answer #{answer}"
             cb success if cb
         else
           cb false
+  
+  get_answers: (cb) ->
+    self = this
+    @get_round (round) ->
+      $redis.zrange "scores:#{self.name}-#{round}", 0, -1, "WITHSCORES", (err, scores) ->
+        self.log "zrange result: " + scores.join(', ').blue
+        answers = scores.filter (_, score) -> score % 2 == 0
+        self.log "get_answers: #{answers.join(', ')}"
+        cb answers
+
+  get_results: (cb) ->
+    @get_answers (answers) ->
+      $redis.hmget "answer_user:#{self.name}-#{round}", answers, (err, users) ->
+        self.log 'users from answers', users
+      self.log "scores: #{scores.join(', ')}"
 
   user_voted_for: (uid, cb) ->
     self = this
@@ -53,7 +72,7 @@ class Channel extends EventEmitter
         $redis.zincrby "scores:#{self.name}-#{round}", 1, answer
 
   new_letters: ->
-    letters = acro.fetch()
+    letters = 'asdf' || acro.fetch()
     $redis.hset "channel:letters", @name, letters
     letters
 

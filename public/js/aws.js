@@ -5,7 +5,8 @@ var aws = (function($){
 		$game = $("#gameStage"),
 		$resp = $("#responseStage"),
 		$vote = $("#vote"),
-		$time = $("#timer");
+		$time = $("#timer"),
+		$chat = $("#chat");
 
 	this.config;
 	this.state = 0;
@@ -34,22 +35,33 @@ var aws = (function($){
 			loadTmpl("/templates/voteTmpl.html","voteTmpl");
 			loadTmpl("/templates/summaryTmpl.html","summaryTmpl");
 			loadTmpl("/templates/scoresTmpl.html","scoresTmpl");
+			loadTmpl("/templates/chatTmpl.html","chatTmpl");
 
 			$("body.playing #txtResponse").live("keypress", function(e) {
 				if (e.keyCode == 13) {
 					e.preventDefault();
 					that.events.submitResponse($("#txtResponse").val());
+					$("#txtResponse").addClass("submitted");
 				}
 			});
 
 			$("body.playing #btnRespond").live("click", function(e) {
 				e.preventDefault();
 				that.events.submitResponse($("#txtResponse").val());
+				$("#txtResponse").addClass("submitted");
 			});
 
 			$("body.voting input.btnVote").live("click", function(e) {
 				e.preventDefault();
 				that.events.submitVote($(this).data("id"));
+			});
+
+			$("#txtChat").live("keypress", function(e) {
+				if (e.keyCode == 13) {
+					e.preventDefault();
+					that.events.sendChat($(this).val());
+					$(this).val("");
+				}
 			});
 		};
 
@@ -170,12 +182,20 @@ var aws = (function($){
 			// render error message
 		});
 
+		sio.on("msg", function(d) {
+			$chat.append($.tmpl("chatTmpl",{username: d.uid, text: d.msg}));
+		});
+
 		this.submitResponse = function(response) {
 			sio.emit("responseSubmitted", {response: response});
 		};
 
 		this.submitVote = function(responseID) {
 			sio.emit("voteSubmitted", {responseID: responseID});
+		};
+
+		this.sendChat = function(text) {
+			sio.emit("msg", {msg: text});	
 		};
 
 		return this;

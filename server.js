@@ -15,6 +15,7 @@ var http = require('http')
   , acro = new AcroLetters()
   , game = require('./lib/game')
   , session_store = new RedisStore()
+  , colors = require('colors')
   , users = {};
 
 everyauth
@@ -63,7 +64,8 @@ app.get('/index', function(req, res) {
     game.available_channel(function(chan) {
         req.session.channel = chan;
         chan.get_users(function(users) {
-            users.join(req.session.uid);
+            if (users.indexOf(req.session.uid) === -1) //  if user isn't in channel add them
+                users.join(req.session.uid);
             var usersLong = tmpUserListFunc(users);
             res.render('index', { players: usersLong , userInfo: { username: req.session.uid } });
         });
@@ -78,7 +80,7 @@ io.sockets.on('connection', function (socket) {
     if (!session || !session.uid || !session.channel) return;
 
       game.get_channel(session.channel.name, function(chan) {
-          console.log('joining: '+chan.name);
+          console.log('joining: '+chan.name.red);
           socket.join(chan.name);
 
           chan.get_users(function(users) {
@@ -102,21 +104,26 @@ io.sockets.on('connection', function (socket) {
               chan.get_users(function(users) {
                   var usersLong = tmpUserListFunc(users);
                   io.sockets.in(chan.name).emit('rosterUpdated', { users: usersLong });
+                  console.log((uid + ' joined '+chan.name).red);
               });
           });
           
           chan.on('game started', function() {
               io.sockets.in(chan.name).emit('gameStarted', {});
+              console.log(('game started: '+chan.name).red);
           });
 
           chan.on('new round', function(acro) {
               io.sockets.in(chan.name).emit('roundStarted', {letters: acro});
               // TODO: implement game start / end / next round in Channel
+              console.log(('round started: '+chan.name).red);
               setTimeout(function() {
                   //get responses[] = {username,  response, votes}
                   // if responses.length ( kill room )
                   io.sockets.in(chan.name).emit('roundEnded', {});
                   io.sockets.in(chan.name).emit('votingStart', {});
+
+                  console.log(('voting started: '+chan.name).red);
 
                   setTimeout(function() {
                       io.sockets.in(chan.name).emit('votingEnded', {});
@@ -124,8 +131,11 @@ io.sockets.on('connection', function (socket) {
                       //return round stats
                       io.sockets.in(chan.name).emit('roundEnded', {});
 
+                      console.log(('voting ended: '+chan.name).red);
+
                       setTimeout(function() {
                           chan.next_round(function() {});
+                          console.log('next round: '+chan.name.red);
                       }, config.rules.roundEnd_time);
                   }, config.rules.vote_time);
 
@@ -135,14 +145,16 @@ io.sockets.on('connection', function (socket) {
 
           chan.on('round reset', function() {
               //get scores[] = {username, score}
+              console.log(('round reset: '+chan.name).red);
               io.sockets.in(chan.name).emit('gameEnded', {});
           });
 
           chan.on('error', function(error) {
-              console.log(error);
+              console.log(('error: '+error).red);
           });
 
           socket.on('responseSubmitted', function(data) {
+              console.log(('got response from '+ session.uid +' in channel : '+chan.name).red);
               // collect responses
           });
           

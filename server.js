@@ -45,25 +45,27 @@ app.configure(function () {
 });
 
 app.get('/', function (req, res) {
+    if (req.session && req.session.uid) {
+        return res.redirect('/index');
+    }
   res.render('home');
 });
+
+var tmpUserListFunc = function(users) {
+    usersLong = [];
+    users.map(function(u) {
+        usersLong.push({ username: u });
+    });
+    return usersLong;
+}
 
 app.get('/index', function(req, res) {
     game.available_channel(function(chan) {
         req.session.channel = chan;
         chan.get_users(function(users) {
             users.join(req.session.uid);
-            if (users.indexOf(req.session.uid) === -1) { //  if user isn't in channel add them
-                chan.add_user(req.session.uid, function(err) {
-                    if (err)
-                        throw new Error(err);
-                });
-            }
-            usersLong = [];
-            users.map(function(u) {
-                usersLong.push({ username: u });
-            });
-            res.render('index', { players: usersLong, userInfo: { username: req.session.uid } });
+            var usersLong = tmpUserListFunc(users);
+            res.render('index', { players: usersLong , userInfo: { username: req.session.uid } });
         });
     });
 });
@@ -79,15 +81,27 @@ io.sockets.on('connection', function (socket) {
           console.log('joining: '+chan.name);
           socket.join(chan.name);
 
-          if (config.env == 'development') {
-              chan.add_user('bro1', function(){});
-              chan.add_user('bro2', function(){});
-          }
+          chan.get_users(function(users) {
+              if (users.indexOf(session.uid) === -1) { //  if user isn't in channel add them
+                  chan.add_user(session.uid, function(err) {
+                      if (err)
+                          throw new Error(err);
+                  });
+              }
+              
+              if (config.env == 'development') {
+                  if (users.length < 2) {
+                      chan.add_user('bro1', function(){});
+                      chan.add_user('bro2', function(){});
+                  }
+              }
+          });
 
 
           chan.on('new user', function(uid) {
               chan.get_users(function(users) {
-                  io.sockets.in(chan.name).emit('rosterUpdated', users);
+                  var usersLong = tmpUserListFunc(users);
+                  io.sockets.in(chan.name).emit('rosterUpdated', { users: usersLong });
               });
           });
           
@@ -105,10 +119,18 @@ io.sockets.on('connection', function (socket) {
 
                   setTimeout(function() {
                       io.sockets.in(chan.name).emit('votingEnded', {});
+
+                      //return round stats
+                      io.sockets.in(chan.name).emit('roundEnded', {});
+
+                      setTimeout(function() {
+                          chan.next_round(function() {});
+                      }, config.rules.roundEnd_time);
                   }, config.rules.vote_time);
 
               }, config.rules.response_time);
           });
+          
 
           chan.on('round reset', function() {
               //get scores[] = {username, score}
@@ -132,6 +154,11 @@ io.sockets.on('connection', function (socket) {
           });
           
           socket.on('disconnect', function() {
+              if (config.env == 'development') {
+                  chan.remove_user('bro1');
+                  chan.remove_user('bro2');
+              }
+              console.log("uid disconnect: " + session.uid);
               chan.remove_user(session.uid);
               socket.leave(chan.name);
           });

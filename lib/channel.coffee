@@ -26,8 +26,11 @@ class Channel extends EventEmitter
     console.log "#{new Date()}"[16..23].cyan, "channel: #{@name} - #{msg}".yellow
 
   answer_valid: (ans, cb) ->
+    self = this
     @get_letters (letters) ->
-      cb letters == letters_for_answer ans
+      answer_letters = letters_for_answer ans
+      self.log answer_letters.cyan
+      cb letters == answer_letters
 
   remove_available: -> $redis.srem 'game:available-channels', @name
 
@@ -57,9 +60,9 @@ class Channel extends EventEmitter
     self = this
     @get_round (round) ->
       return self.emit 'error', 'not ready for answer' if round is 0
-      self.remove_previous_answer uid, round
       self.answer_valid answer, (valid) ->
         if valid
+          self.remove_previous_answer uid, round
           $redis.hsetnx "answer_user:#{self.name}-#{round}", answer, uid, (err, success) ->
             if success
               $redis.hset "user_answer:#{self.name}-#{round}", uid, answer

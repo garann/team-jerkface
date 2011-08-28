@@ -119,6 +119,7 @@ class Channel extends EventEmitter
         $redis.hset "channel:round", self.name, 0
         self.log "reset to round 0"
         self.emit 'round reset'
+        self.end()
       else
         letters = self.new_letters()
         self.log "entered round #{round} with #{letters}"
@@ -180,5 +181,9 @@ class Channel extends EventEmitter
     $redis.llen @list, (err, len) ->
       self.log "initialized with #{len} users"
       self.emit 'ready'
+
+  end: ->
+    $redis.del @list
+    $redis.remove_available()
 
 module.exports = Channel

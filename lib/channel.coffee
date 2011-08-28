@@ -39,11 +39,6 @@ class Channel extends EventEmitter
         else
           cb false
 
-  get_state: (cb) ->
-    # TODO
-
-  # TODO 
-
   user_voted_for: (uid, cb) ->
     self = this
     @get_round (round) ->
@@ -109,12 +104,21 @@ class Channel extends EventEmitter
         cb() if cb
 
   remove_user: (uid, cb) ->
+    self = this
     $redis.lrem @list, 1, uid, (err, user_removed) ->
-      cb user_removed if cb
+      cb user_removed == 1 if cb
+      self.emit 'user left channel'
+      $redis.llen self.list, (err, len) ->
+        if len == 0
+          self.remove_available() 
+          self.emit 'channel empty'
+        else if len < config.rules.min_players
+          self.emit 'waiting for users'
+        else if len < config.rules.max_players
+          self.make_available()
 
   has_user: (user, cb) ->
-    @get_users (users) ->
-      cb user in users
+    @get_users (users) -> cb user in users
 
   get_users: (cb) ->
     $redis.lrange @list, 0, -1, (err, users) -> cb users
@@ -126,7 +130,7 @@ class Channel extends EventEmitter
     $redis.llen @list, (err, len) ->
       throw err if err?
       self.log "initialized with #{len} users"
-      if len >= config.rules.max_players
+      if len > config.rules.max_players
         self.emit 'error', 'too many users'
       else
         self.emit 'ready'

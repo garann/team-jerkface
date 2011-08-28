@@ -181,5 +181,7 @@ io.sockets.on('connection', function (socket) {
   });
 });
 
+game.clear_available_channels();
+
 app.listen(config.port); 
 console.log('Listening on ' + app.address().port);

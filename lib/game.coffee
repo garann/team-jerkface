@@ -4,6 +4,9 @@ Channel = require './channel'
 channels = {}
 
 module.exports =
+  clear_available_channels: ->
+    $redis.del 'game:available-channels'
+
   get_channel: (name, cb) ->
     if channels[name]
         cb channels[name]

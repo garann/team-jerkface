@@ -9,7 +9,7 @@ acro = new AcroLetters()
 
 # TODO: fix mid-word punctuation such as ' and -
 split_words = (ans) -> 
-  ans.replace(/[^A-Za-z0-9 ]/g, ' ').toLowerCase().split(' ')
+  ans.replace(/[^A-Za-z0-9 ]/g, ' ').replace(/['-]/g,'').toLowerCase().split(' ')
 
 letters_for_answer = (answer) ->
   final = ""
@@ -46,17 +46,20 @@ class Channel extends EventEmitter
   get_answers: (cb) ->
     self = this
     @get_round (round) ->
-      $redis.zrange "scores:#{self.name}-#{round}", 0, -1, "WITHSCORES", (err, scores) ->
-        self.log "zrange result: " + scores.join(', ').blue
+      $redis.zrevrange "scores:#{self.name}-#{round}", 0, -1, "WITHSCORES", (err, scores) ->
         answers = scores.filter (_, score) -> score % 2 == 0
         self.log "get_answers: #{answers.join(', ')}"
-        cb answers
+        cb answers, round
 
   get_results: (cb) ->
-    @get_answers (answers) ->
-      $redis.hmget "answer_user:#{self.name}-#{round}", answers, (err, users) ->
-        self.log 'users from answers', users
-      self.log "scores: #{scores.join(', ')}"
+    self = this
+    @get_answers (answers, round) ->
+      results = []
+      answers.push (err, users...) ->
+        self.log 'users from answers', users.join('-=-')
+      console.log "args: #{answers.join(',')}"
+      $redis.hmget "answer_user:#{self.name}-#{round}", (err, res) ->
+      #self.log "scores: #{scores.join(', ')}"
 
   user_voted_for: (uid, cb) ->
     self = this
@@ -72,7 +75,7 @@ class Channel extends EventEmitter
         $redis.zincrby "scores:#{self.name}-#{round}", 1, answer
 
   new_letters: ->
-    letters = 'asdf' || acro.fetch()
+    letters = acro.fetch()
     $redis.hset "channel:letters", @name, letters
     letters
 
@@ -85,14 +88,14 @@ class Channel extends EventEmitter
         cb self.new_letters()
 
   get_round: (cb) ->
-    $redis.hget "channel-round", @name, (err, round) ->
+    $redis.hget "channel:round", @name, (err, round) ->
       cb round || 0
 
   next_round: (cb) ->
     self = this
-    $redis.hincrby "channel-round", @name, 1, (err, round) ->
+    $redis.hincrby "channel:round", @name, 1, (err, round) ->
       if round > config.rules.max_rounds
-        $redis.hset "channel-round", self.name, 0
+        $redis.hset "channel:round", self.name, 0
         self.log "reset to round 0"
         self.emit 'round reset'
       else
@@ -147,7 +150,6 @@ class Channel extends EventEmitter
     @list = "chan:users-#{@name}"
     @emit 'error', "name can't be blank" if @name?.length == 0
     $redis.llen @list, (err, len) ->
-      throw err if err?
       self.log "initialized with #{len} users"
       if len > config.rules.max_players
         self.emit 'error', 'too many users'

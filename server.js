@@ -146,6 +146,16 @@ game.on('new channel', function(chan) {
                                     if (haltGame) {
                                         io.sockets.in(chan.name).emit('gameEnded', {});
                                         console.log(('game halted').red);
+                                        
+                                        chan.get_users(function(users) {
+                                            for (user in users)
+                                                chan.remove_user(user);
+                                        });
+                                
+                                        io.sockets.clients(chan.name).forEach(function(socket) {
+                                            socket.remove(chan.name);
+                                        });
+
                                     } else {
                                         chan.next_round(function() {});
                                         console.log('next round: '+chan.name.red);                              

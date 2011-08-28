@@ -34,7 +34,8 @@ header h3 { color: #cff; text-shadow: -2px 2px 3px #000; }
 #gameStage { padding: 20px; text-align: center; }
 .letters { font-family: 'Slackey', Helvetica; text-transform: uppercase; color: #090; text-shadow: -2px 4px 5px #191919; font-size: 60px; -moz-animation: popin .5s 0s 1 forwards; -webkit-animation: popin .5s 0s 1 forwards; }
 #responseStage { overflow: hidden;}
-#responseStage textarea { background-color: #eee; width: 80%; margin: 10px 5%; padding: 50px; resize: none; font-family: helvetica, sans-serif; font-size: 20px; color: #333; border: none; border-radius: 10px; box-shadow: 0px 2px 3px #191919; }
+#responseStage textarea { background-color: #eee; width: 80%; margin: 10px 5%; padding: 50px; resize: none; font-family: helvetica, sans-serif; font-size: 20px; color: #333; border: 0px solid #ff0; border-radius: 10px; box-shadow: 0px 2px 3px #191919; }
+#responseStage textarea.submitted { -moz-animation: borderf .5s 0s 1 forwards; -webkit-animation: borderf .5s 0s 1 forwards; }
 #btnRespond { float: right; margin: 10px 5% 20px; background-color: #60f;  }
 #btnRespond:hover { color: #000; }
 
@@ -52,4 +53,13 @@ header h3 { color: #cff; text-shadow: -2px 2px 3px #000; }
 @-moz-keyframes popin {
     from { font-size: 1px; }
     to { font-size: 60px; }
+}
+
+@-webkit-keyframes borderf {
+	from { border-width: 5px; }
+	to { border-width: 0px; }
+}
+@-moz-keyframes borderf {
+	from { border-width: 5px; }
+	to { border-width: 0px; }
 }

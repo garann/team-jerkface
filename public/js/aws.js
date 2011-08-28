@@ -39,12 +39,14 @@ var aws = (function($){
 				if (e.keyCode == 13) {
 					e.preventDefault();
 					that.events.submitResponse($("#txtResponse").val());
+					$("#txtResponse").addClass("submitted");
 				}
 			});
 
 			$("body.playing #btnRespond").live("click", function(e) {
 				e.preventDefault();
 				that.events.submitResponse($("#txtResponse").val());
+				$("#txtResponse").addClass("submitted");
 			});
 
 			$("body.voting input.btnVote").live("click", function(e) {

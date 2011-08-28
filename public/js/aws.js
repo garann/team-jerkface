@@ -52,26 +52,21 @@ var aws = (function($){
 			$body
 				.removeClass("playing")
 				.removeClass("voting");
-			that.clearTimer();
 		};
 
 		this.timer = function(t) {
-			$time.removeClass("out");
-			that.timerT = setInterval(function() {
-					t -= 1000;
-					if (t > 9000)
-						$time.text("0:" + new Date(t).getSeconds());
+			var timerT = setInterval(function() {
+					t--;
+					if (t > 9)
+						$time.text("0:" + t);
 					else if (t > -1) {
 						$time.addClass("out");
-						$time.text("0:0" + new Date(t).getSeconds());
-					} else
-						clearInterval(that.timerT);
+						$time.text("0:0" + t);
+					} else {						
+						clearInterval(timerT);
+						$time.text("-:--").removeClass("out");
+					}
 				}, 1000);
-		};
-
-		this.clearTimer = function() {
-			clearInterval(that.timerT);
-			$time.text("-:--").removeClass("out");
 		};
 
 		$.subscribe("rosterUpdated",function() {
@@ -79,15 +74,15 @@ var aws = (function($){
 		});
 
 		$.subscribe("roundStarted",function() {
+			rend.timer((that.config.response_time-1000)/1000);
 			$game.html($.tmpl("lettersTmpl",{letters: that.currentRound.letters}));
 			$resp.html($.tmpl("responseTmpl",null));
-			rend.timer(that.config.response_time-1000);
 			$body.addClass("playing");
 		});
 
 		$.subscribe("votingStarted",function() {
+			rend.timer((that.config.vote_time-1000)/1000);
 			$vote.html($.tmpl("voteTmpl",{responses: that.currentRound.responses}));
-			rend.timer(that.config.vote_time-1000);
 			$body.addClass("voting");
 		});
 

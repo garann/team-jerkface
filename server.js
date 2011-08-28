@@ -165,8 +165,12 @@ io.sockets.on('connection', function (socket) {
           });
 
           socket.on('responseSubmitted', function(data) {
-              console.log(('got response from '+ session.uid +' in channel : '+chan.name).red);
+              console.log(('got response from ' + session.uid + ' in channel : ' + chan.name + ' answer: ' + data.response).red);
               // collect responses
+              chan.submit_answer(session.uid, data.response, function(err) {
+                  if (err)
+                      socket.emit('responseError', { errorMessage: err });
+              });
           });
           
           socket.on('voteSubmitted', function(data) {

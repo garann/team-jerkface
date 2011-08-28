@@ -8,7 +8,6 @@ acro = new AcroLetters()
 
 # TODO: implement waiting time between 3 users and game start
 
-# TODO: fix mid-word punctuation such as ' and -
 split_words = (ans) -> 
   ans.replace(/[^A-Za-z0-9 ]/g, ' ').replace(/['-]/g,'').toLowerCase().split(' ')
 
@@ -80,12 +79,16 @@ class Channel extends EventEmitter
 
   vote_for: (uid, answer) ->
     self = this
+    self.log "#{uid} voted for #{answer}"
     @get_round (round) ->
       self.user_voted_for uid, (old_ans) ->
-        $redis.zincrby "scores:#{self.name}-#{round}", -1, old_ans if old_ans
+        if old_ans
+          $redis.zincrby "scores:#{self.name}-#{round}", -1, old_ans
+          self.log "#{uid} removing previous vote for #{old_ans}"
         $redis.zincrby "scores:#{self.name}-#{round}", 1, answer
 
   new_letters: ->
+    # letters = if config.env == 'development' then 'asdf' else acro.fetch()
     letters = acro.fetch()
     $redis.hset "channel:letters", @name, letters
     letters

@@ -13,7 +13,10 @@ game.available_channel(function (chan) {
       console.log("letters: ".red + letters)
       chan.submit_answer('bro2', 'alpine s d f')
       chan.submit_answer('bro', 'a s d f', function () {
-        chan.get_results()
+        chan.get_results(function (results) {
+          console.log('results:'.red)
+          console.dir(results)
+        })
       })
     })
     chan.on('error', function (error) {

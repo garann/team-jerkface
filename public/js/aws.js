@@ -47,11 +47,11 @@ var aws = (function($){
 		};
 
 		this.responseTimer = function(startTime) {
-			timer(startTime, config.response_time);
+			timer(startTime, that.config.response_time);
 		};
 
 		this.voteTimer = function(startTime) {
-			timer(startTime, config.vote_time);
+			timer(startTime, that.config.vote_time);
 		};
 
 		this.clear = function() {

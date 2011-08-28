@@ -26,6 +26,8 @@ header h3 { color: #cff; text-shadow: -2px 2px 3px #000; padding-left: 20px; }
 .voting #vote { display: block; }
 .playing #vote,
 .voting #play { display: none;}
+.playing #wait,
+.voting #wait { display: none; }
 
 #players { margin: 50px 5%; background-color: rgba(50,50,50,0.5); border-radius: 10px; text-align: center; padding: 10px 0px; }
 #players a { display: block; }

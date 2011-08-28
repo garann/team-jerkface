@@ -12,6 +12,7 @@ header { background-color: rgba(120,120,120,0.5); border-radius: 0px 0px 10px 10
 h1, h2, h3 { font-family: 'Slackey', Helvetica, sans-serif; color: #ddd; text-shadow: -2px 2px 3px #191919; margin: 0px; }
 a { color: #f06; text-decoration: none; }
 a.me { color: #60f; }
+input[type=button] { font-family: 'Slackey', Helvetica, sans-serif; color: #222; text-shadow: 0px 1px 0px rgba(200,200,200,0.5); border: none; border-radius: 10px; box-shadow: 0px 2px 3px #191919; padding: 5px 20px; }
 
 
 header h3 { color: #cff; text-shadow: -2px 2px 3px #000; }
@@ -27,13 +28,18 @@ header h3 { color: #cff; text-shadow: -2px 2px 3px #000; }
 
 #players { margin: 20px 5%; background-color: rgba(50,50,50,0.5); border-radius: 10px; text-align: center; padding: 10px 0px; }
 #players a { display: block; }
-#play { margin: 20px 5%; background-color: rgba(50,50,50,0.5); border-radius: 10px; }
+#play,
+#vote { margin: 20px 5%; background-color: rgba(50,50,50,0.5); border-radius: 10px; }
 #gameStage { padding: 20px; text-align: center; }
 .letters { font-family: 'Slackey', Helvetica; text-transform: uppercase; color: #090; text-shadow: -2px 4px 5px #191919; font-size: 60px; -moz-animation: popin .5s 0s 1 forwards; -webkit-animation: popin .5s 0s 1 forwards; }
 #responseStage { overflow: hidden;}
 #responseStage textarea { background-color: #eee; width: 80%; margin: 10px 5%; padding: 5%; resize: none; font-family: helvetica, sans-serif; font-size: 20px; color: #333; border: none; border-radius: 10px; box-shadow: 0px 2px 3px #191919; }
-#btnRespond { float: right; margin: 10px 5% 20px; background-color: #60f; color: #222; text-shadow: 0px 1px 0px rgba(200,200,200,0.5); border: none; border-radius: 10px; box-shadow: 0px 2px 3px #191919; padding: 5px 20px; }
+#btnRespond { float: right; margin: 10px 5% 20px; background-color: #60f;  }
 #btnRespond:hover { color: #000; }
+
+#vote { padding: 20px;}
+#vote .response { background-color: rgba(200,200,200,0.6); padding: 5px; margin-bottom: 10px; overflow: hidden; }
+.btnVote { float: right; background-color: #f60;}
 
 @-webkit-keyframes popin {
     from { font-size: 1px; }

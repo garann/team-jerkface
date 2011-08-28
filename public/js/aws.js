@@ -100,7 +100,7 @@ var aws = (function($){
 					var n = (new Date()).getTime(),
 						t = new Date(endTime - n);
 					if (t > 0)
-						$timer.text("0:" + t.getSeconds());
+						$time.text("0:" + t.getSeconds());
 					else
 						clearInterval(timerT);
 				}, 1000);
@@ -123,6 +123,7 @@ var aws = (function($){
 		});
 
 		sio.on("roundStarted", function(d) {
+			that.render.clear();
 			// render letters
 			that.roomInfo.round++;
 			that.currentRound.letters = d.letters;
@@ -136,8 +137,6 @@ var aws = (function($){
 
 		sio.on("roundEnded", function(d) {
 			that.render.clear();
-			that.currentRound.responses = d.responses;
-			$.publish("roundSummary");
 		});
 
 		sio.on("votingStarted", function(d) {
@@ -148,6 +147,8 @@ var aws = (function($){
 
 		sio.on("votingEnded", function(d) {
 			that.render.clear();
+			that.currentRound.responses = d.responses;
+			$.publish("roundSummary");
 		});
 
 		sio.on("gameEnded", function(d) {

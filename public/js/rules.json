@@ -6,8 +6,8 @@
   , "min_acr_size": 4
   , "max_acr_size": 7
   , "response_length": 300
-  , "response_time": 60000
-  , "vote_time": 30000
+  , "response_time": 20000
+  , "roundBuffer_time" : 2000
+  , "vote_time": 2000
   , "roundEnd_time": 2000
-
 }

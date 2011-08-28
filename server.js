@@ -46,6 +46,7 @@ app.configure(function () {
 });
 
 app.get('/', function (req, res) {
+    if (req.session && req.session.channel) delete req.session['channel'];
     if (req.session && req.session.uid) {
         return res.redirect('/index');
     }
@@ -61,6 +62,10 @@ var tmpUserListFunc = function(users) {
 }
 
 app.get('/index', function(req, res) {
+    if (!req.session.uid) {
+        res.redirect('/');
+        return;
+    }
     game.available_channel(function(chan) {
         req.session.channel = chan;
         chan.get_users(function(users) {
@@ -83,6 +88,11 @@ game.on('new channel', function(chan) {
             console.log((uid + ' joined '+chan.name).red);
         });
     });
+
+    if (config.env == 'development') {
+        chan.add_user('bro1', function(){});
+        chan.add_user('bro2', function(){});
+    }
     
     chan.on('game started', function() {
         io.sockets.in(chan.name).emit('gameStarted', {});
@@ -201,13 +211,6 @@ io.sockets.on('connection', function (socket) {
                           throw new Error(err);
                   });
               } 
-              
-              if (config.env == 'development') {
-                  if (users.length < 2) {
-                      chan.add_user('bro1', function(){});
-                      chan.add_user('bro2', function(){});
-                  }
-              }
           });
 
           socket.on('responseSubmitted', function(data) {

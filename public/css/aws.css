@@ -8,18 +8,18 @@
 
 html { margin: 0px; padding: 0px; }
 body { background: #333 url(/img/tactile_noise.png); margin: 0px; padding: 0px; color: #eee; font-family: Helvetica, sans-serif; }
-header { background-color: rgba(120,120,120,0.5); border-radius: 0px 0px 10px 10px; padding: 5px 20px; box-shadow: 0px 2px 3px #191919; }
+header { position: fixed; top: 0px; left: 0px; width: 100%; background-color: rgba(120,120,120,0.5); border-radius: 0px 0px 10px 10px; padding: 5px 0px; box-shadow: 0px 2px 3px #191919; }
 h1, h2, h3 { font-family: 'Slackey', Helvetica, sans-serif; color: #ddd; text-shadow: -2px 2px 3px #191919; margin: 0px; }
 a { color: #f06; text-decoration: none; }
 a.me { color: #60f; }
 input[type=button] { font-family: 'Slackey', Helvetica, sans-serif; color: #222; text-shadow: 0px 1px 0px rgba(200,200,200,0.5); border: none; border-radius: 10px; box-shadow: 0px 2px 3px #191919; padding: 5px 20px; }
 
 
-header h3 { color: #cff; text-shadow: -2px 2px 3px #000; }
+header h3 { color: #cff; text-shadow: -2px 2px 3px #000; padding-left: 20px; }
 
 .login { position: absolute; top: 100px; left: 50%; margin-left: -200px; width: 400px; background-color: rgba(50,50,50,0.5); border-radius: 10px; text-align: center; padding: 20px; }
 
-#timer { background-color: #333; padding: 5px; min-width: 50px; float: right; border-radius: 10px; box-shadow: 0px 1px 2px #777; text-align: right; }
+#timer { background-color: #333; padding: 5px; margin-right: 20px; min-width: 50px; float: right; border-radius: 10px; box-shadow: 0px 1px 2px #777; text-align: right; }
 #timer.out { color: #f00; }
 .votebtn { float: right; margin-right: 10px; }
 .playing #play,
@@ -27,10 +27,10 @@ header h3 { color: #cff; text-shadow: -2px 2px 3px #000; }
 .playing #vote,
 .voting #play { display: none;}
 
-#players { margin: 20px 5%; background-color: rgba(50,50,50,0.5); border-radius: 10px; text-align: center; padding: 10px 0px; }
+#players { margin: 50px 5%; background-color: rgba(50,50,50,0.5); border-radius: 10px; text-align: center; padding: 10px 0px; }
 #players a { display: block; }
 #play,
-#vote { margin: 20px 5%; background-color: rgba(50,50,50,0.5); border-radius: 10px; }
+#vote { margin: 50px 5%; background-color: rgba(50,50,50,0.5); border-radius: 10px; }
 #gameStage { padding: 20px; text-align: center; }
 .letters { font-family: 'Slackey', Helvetica; text-transform: uppercase; color: #090; text-shadow: -2px 4px 5px #191919; font-size: 60px; -moz-animation: popin .5s 0s 1 forwards; -webkit-animation: popin .5s 0s 1 forwards; }
 #responseStage { overflow: hidden;}
@@ -45,6 +45,9 @@ header h3 { color: #cff; text-shadow: -2px 2px 3px #000; }
 #vote .response a { float: left; margin-right: 10px; } 
 #vote .response i { font-style: normal; float: right; }
 .btnVote { float: right; background-color: #f60;}
+
+#chat { clear: both; margin-top: 50px; max-height: 300px; background-color: #eee; color: #333; overflow: auto; padding: 20px; }
+#txtChat { display: block; border: none; width: 90%; padding: 5px; margin-top: 5px; }
 
 @-webkit-keyframes popin {
     from { font-size: 1px; }

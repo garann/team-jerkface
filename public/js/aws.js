@@ -183,7 +183,7 @@ var aws = (function($){
 		});
 
 		sio.on("msg", function(d) {
-			$chat.append($.tmpl("chatTmpl",{username: d.uid, text: d.msg, me: that.userInfo.username}));
+			$chat.append($.tmpl("chatTmpl",{username: d.uid, text: d.msg.msg, me: that.userInfo.username}));
 		});
 
 		this.submitResponse = function(response) {

@@ -1,5 +1,13 @@
+
+@media screen and (min-width: 600px) {
+	
+#players { float: left; width: 15%; }
+#play { float: left; width: 60%; }
+
+}
+
 html { margin: 0px; padding: 0px; }
-body { background: #333 url(/img/tactile_noise.png); margin: 0px; padding: 0px; color: #eee; font-family: helvetica, sans-serif; }
+body { background: #333 url(/img/tactile_noise.png); margin: 0px; padding: 0px; color: #eee; font-family: Helvetica, sans-serif; }
 header { background-color: rgba(120,120,120,0.5); border-radius: 0px 0px 10px 10px; padding: 5px 20px; box-shadow: 0px 2px 3px #191919; }
 h1, h2, h3 { font-family: 'Slackey', Helvetica, sans-serif; color: #ddd; text-shadow: -2px 2px 3px #191919; margin: 0px; }
 a { color: #f06; text-decoration: none; }
@@ -11,14 +19,15 @@ header h3 { color: #cff; text-shadow: -2px 2px 3px #000; }
 .login { position: absolute; top: 100px; left: 50%; margin-left: -200px; width: 400px; background-color: rgba(50,50,50,0.5); border-radius: 10px; text-align: center; padding: 20px; }
 
 #timer { background-color: #333; padding: 5px; min-width: 50px; float: right; border-radius: 10px; box-shadow: 0px 1px 2px #777; text-align: right; }
+#timer.out { color: #f00; }
 .playing #play,
 .voting #vote { display: block; }
 .playing #vote,
 .voting #play { display: none;}
 
-#players { float: left; width: 15%; margin: 20px 2%; background-color: rgba(50,50,50,0.5); border-radius: 10px; text-align: center; padding: 10px 0px; }
+#players { margin: 20px 5%; background-color: rgba(50,50,50,0.5); border-radius: 10px; text-align: center; padding: 10px 0px; }
 #players a { display: block; }
-#play { float: left; width: 60%; margin: 20px 5%; background-color: rgba(50,50,50,0.5); border-radius: 10px; }
+#play { margin: 20px 5%; background-color: rgba(50,50,50,0.5); border-radius: 10px; }
 #gameStage { padding: 20px; text-align: center; }
 .letters { font-family: 'Slackey', Helvetica; text-transform: uppercase; color: #090; text-shadow: -2px 4px 5px #191919; font-size: 60px; -moz-animation: popin .5s 0s 1 forwards; -webkit-animation: popin .5s 0s 1 forwards; }
 #responseStage { overflow: hidden;}

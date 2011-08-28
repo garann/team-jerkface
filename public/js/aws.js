@@ -52,19 +52,27 @@ var aws = (function($){
 			$body
 				.removeClass("playing")
 				.removeClass("voting");
+			that.clearTimer;
 		};
 
 		this.timer = function(t) {
-			var timerT = setInterval(function() {
+			$time.removeClass("out");
+			that.timerT = setInterval(function() {
 					t -= 1000;
 					if (t > 9000)
 						$time.text("0:" + new Date(t).getSeconds());
-					else if (t > -1)
+					else if (t > -1) {
+						$time.addClass("out");
 						$time.text("0:0" + new Date(t).getSeconds());
-					else
-						clearInterval(timerT);
+					} else
+						clearInterval(that.timerT);
 				}, 1000);
-		}
+		};
+
+		this.clearTimer = function() {
+			clearInterval(that.timerT);
+			$time.text("-:--").removeClass("out");
+		};
 
 		$.subscribe("rosterUpdated",function() {
 			$roster.html($.tmpl("rosterTmpl",{players: that.roomInfo.users, me: that.userInfo.username}));
@@ -125,6 +133,7 @@ var aws = (function($){
 
 		sio.on("responseError", function(d) {
 			// render error message
+			// data is in errorMessage
 		});
 
 		sio.on("roundEnded", function(d) {

@@ -124,32 +124,36 @@ io.sockets.on('connection', function (socket) {
               // TODO: implement game start / end / next round in Channel
               console.log(('round started: '+chan.name).red);
               setTimeout(function() {
-                  //get responses[] = {username,  response, votes}
-                  // if responses.length ( kill room )
-                  io.sockets.in(chan.name).emit('roundEnded', {});
-                  io.sockets.in(chan.name).emit('votingStart', {});
-
-                  console.log(('voting started: '+chan.name).red);
-
-                  setTimeout(function() {
-                      io.sockets.in(chan.name).emit('votingEnded', {});
-
-                      //return round stats
-                      io.sockets.in(chan.name).emit('roundEnded', {});
-
-                      console.log(('voting ended: '+chan.name).red);
+                  chan.get_answers(function(answers) {
+                      //get responses[] = {username,  response, votes}
+                      // if responses.length ( kill room )
+                      var answersLong = [];
+                      answers.map(function(a) {
+                          answersLong.push({ response: a, responseId: a });
+                      });
+                      io.sockets.in(chan.name).emit('votingStarted', {responses: answersLong});
+                      console.log(('voting started: '+chan.name).red);
 
                       setTimeout(function() {
-                          if (haltGame) {
-                              io.sockets.in(chan.name).emit('gameEnded', {});
-                              console.log(('game halted').red);
-                          } else {
-                              chan.next_round(function() {});
-                              console.log('next round: '+chan.name.red);                              
-                          }
-                      }, config.rules.roundEnd_time);
-                  }, config.rules.vote_time);
-
+                          io.sockets.in(chan.name).emit('votingEnded', {});
+                          
+                          //return round stats
+                          io.sockets.in(chan.name).emit('roundEnded', {});
+                          console.log(('voting ended: '+chan.name).red);
+                          
+                          setTimeout(function() {
+                              if (haltGame) {
+                                  io.sockets.in(chan.name).emit('gameEnded', {});
+                                  console.log(('game halted').red);
+                              } else {
+                                  chan.next_round(function() {});
+                                  console.log('next round: '+chan.name.red);                              
+                              }
+                          }, config.rules.roundEnd_time);
+                      }, config.rules.vote_time);
+                      
+                  });
+                  
               }, config.rules.response_time);
           });
           

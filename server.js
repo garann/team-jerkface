@@ -131,6 +131,7 @@ io.sockets.on('connection', function (socket) {
                       answers.map(function(a) {
                           answersLong.push({ response: a, responseId: a });
                       });
+                      io.sockets.in(chan.name).emit('roundEnded', {});
                       io.sockets.in(chan.name).emit('votingStarted', {responses: answersLong});
                       console.log(('voting started: '+chan.name).red);
 

@@ -46,7 +46,7 @@ app.configure(function () {
 
 app.get('/', function (req, res) {
     if (req.session && req.session.uid) {
-        //return res.redirect('/index');
+        return res.redirect('/index');
     }
   res.render('home');
 });

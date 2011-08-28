@@ -56,11 +56,11 @@ var aws = (function($){
 
 		this.timer = function(t) {
 			var timerT = setInterval(function() {
-					t--;
-					if (t > 9)
-						$time.text("0:" + t.getSeconds());
-					else if (t > -1)
-						$time.text("0:0" + t.getSeconds());
+					t -= 1000;
+					if (t > 9000)
+						$time.text("0:" + new Date(t).getSeconds()-1);
+					else if (t > 0)
+						$time.text("0:0" + new Date(t).getSeconds()-1);
 					else
 						clearInterval(timerT);
 				}, 1000);

@@ -15,6 +15,7 @@ letters_for_answer = (answer) ->
   final += word[0] || '' for word in split_words answer
   final
 
+
 class Channel extends EventEmitter
   log: (msg) ->
     console.log "#{new Date()}"[16..23].cyan, "channel: #{@name} - #{msg}".yellow

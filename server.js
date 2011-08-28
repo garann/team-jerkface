@@ -129,6 +129,8 @@ io.sockets.on('connection', function (socket) {
                           console.log(('no answers: '+chan.name).red);
                           io.sockets.in(chan.name).emit('gameEnded', {});
                           console.log(('game halted').red);
+                          chan.remove_user(session.uid);
+                          socket.leave(chan.name);
                       } else {
                           var answersLong = [];
                           answers.map(function(a) {
@@ -145,6 +147,8 @@ io.sockets.on('connection', function (socket) {
                                       console.log(('voting ended [no votes]: '+chan.name).red);
                                       io.sockets.in(chan.name).emit('gameEnded', {});
                                       console.log(('game halted').red);
+                                      chan.remove_user(session.uid);
+                                      socket.leave(chan.name);
                                   } else {
                                       io.sockets.in(chan.name).emit('votingEnded', { responses: results });
                                       console.log(('voting ended: '+chan.name).red);

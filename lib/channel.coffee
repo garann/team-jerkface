@@ -34,7 +34,6 @@ class Channel extends EventEmitter
     $redis.hdel "user_answer:#{@name}-#{round}", uid, (err, resp) ->
       self.log "#{uid}'s previous answer removed'" if resp
 
-  # TODO same user submits two answers, replace old one
   submit_answer: (uid, answer, cb) ->
     self = this
     @get_round (round) ->
@@ -186,5 +185,6 @@ class Channel extends EventEmitter
     $redis.del @list
     $redis.hdel "channel:round", @name
     @remove_available()
+    @log "game ended"
 
 module.exports = Channel

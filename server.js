@@ -135,10 +135,8 @@ io.sockets.on('connection', function (socket) {
                       console.log(('voting started: '+chan.name).red);
 
                       setTimeout(function() {
-                          io.sockets.in(chan.name).emit('votingEnded', {});
-                          
                           //return round stats
-                          io.sockets.in(chan.name).emit('roundEnded', {});
+                          io.sockets.in(chan.name).emit('votingEnded', {});
                           console.log(('voting ended: '+chan.name).red);
                           
                           setTimeout(function() {
@@ -171,18 +169,23 @@ io.sockets.on('connection', function (socket) {
           socket.on('responseSubmitted', function(data) {
               console.log(('got response from ' + session.uid + ' in channel : ' + chan.name + ' answer: ' + data.response).red);
               // collect responses
-              chan.submit_answer(session.uid, data.response, function(err) {
-                  if (err)
-                      socket.emit('responseError', { errorMessage: err });
+              chan.submit_answer(session.uid, data.response, function(success) {
+                  if (!success) {
+                      socket.emit('responseError', { errorMessage: success });
+                      console.log(('responseError : ' + success).red);
+                  }
               });
           });
           
           socket.on('voteSubmitted', function(data) {
               // collect votes
+              chan.vote_for(session.uid, data.responseId);
+              console.log((session.uid + ' voted for ' + data.responseId).red);
           });
 
           socket.on('msg', function(msg) {
               socket.broadcast.to(chan.name).emit('msg', {uid: session.uid, msg: msg});
+              console.log((session.uid + ' says: ' + msg).red);
           });
           
           socket.on('disconnect', function() {
@@ -190,7 +193,7 @@ io.sockets.on('connection', function (socket) {
                   chan.remove_user('bro1');
                   chan.remove_user('bro2');
               }
-              console.log("uid disconnect: " + session.uid);
+              console.log(("uid disconnect: " + session.uid).red);
               chan.remove_user(session.uid);
               socket.leave(chan.name);
           });

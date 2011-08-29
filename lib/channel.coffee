@@ -112,21 +112,16 @@ class Channel extends EventEmitter
       $redis.hget "voted_for:#{self.name}-#{round}", uid, (err, ans) ->
         cb ans
 
-  vote_for: (uid, answer, cb) ->
+  vote_for: (uid, answer) ->
     self = this
     self.log "#{uid} voted for #{answer}"
     @get_round (round) ->
-      $redis.hget "voted_for:#{self.name}-#{round}", uid, (err, my_ans) ->
-        if my_ans = answer
-          cb 'voted for self' if cb
-        else
-          self.user_voted_for uid, (old_ans) ->
-            if old_ans
-              $redis.zincrby "scores:#{self.name}-#{round}", -1, old_ans
-              self.log "#{uid} removing previous vote for #{old_ans}"
-            $redis.hset "voted_for:#{self.name}-#{round}", uid, answer
-            $redis.zincrby "scores:#{self.name}-#{round}", 1, answer
-            cb() if cb
+      self.user_voted_for uid, (old_ans) ->
+        if old_ans
+          $redis.zincrby "scores:#{self.name}-#{round}", -1, old_ans
+          self.log "#{uid} removing previous vote for #{old_ans}"
+        $redis.hset "voted_for:#{self.name}-#{round}", uid, answer
+        $redis.zincrby "scores:#{self.name}-#{round}", 1, answer
 
   new_letters: ->
     # letters = if config.env == 'development' then 'asdf' else acro.fetch()

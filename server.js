@@ -219,13 +219,8 @@ io.sockets.on('connection', function (socket) {
           
           socket.on('voteSubmitted', function(data) {
               // collect votes
-              chan.vote_for(session.uid, data.responseID, function(err) {
-                  if (err) {
-                      console.log((session.uid + ' vote error: '+err).red);
-                  } else {
-                      console.log((session.uid + ' voted for ' + data.responseID).red);
-                  }
-              });
+              chan.vote_for(session.uid, data.responseID);
+              console.log((session.uid + ' voted for ' + data.responseID).red);
           });
 
           socket.on('msg', function(msg) {
